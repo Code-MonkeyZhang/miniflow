@@ -6,7 +6,9 @@ import numpy as np
 def compute_gradient(x_train, y_train, w, b):
     # m = number of training examples
     m = x_train.shape[0]
+    dj_dw = 0
 
+    dj_db = 0
     for i in range(m):
         # compute the prediction of current w,b
         y_predict = w*x_train[i]+b
@@ -20,7 +22,7 @@ def compute_gradient(x_train, y_train, w, b):
     dj_dw = dj_dw/m
     dj_db = dj_db/m
 
-    return dj_dw,dj_db
+    return dj_dw, dj_db
 
 # feature scaling
 
@@ -28,9 +30,8 @@ def compute_gradient(x_train, y_train, w, b):
 def feature_scaling(x_train):
     return x_train
 
+
 # gradient descent
-
-
 def simple_linear_regression(x_train, y_train, w_init, b_init, alpha, num_iterations):
 
     # initialize w and b

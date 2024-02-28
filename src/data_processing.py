@@ -9,8 +9,6 @@ from util import *
 def load_data():
     # load data
     data=np.loadtxt('data/simple_gd_data.txt', delimiter=',')
-    print(data)
-    print(data.shape)
     x_train = data[:,0]
     y_train = data[:,1]
     z_train = data[:,2]
