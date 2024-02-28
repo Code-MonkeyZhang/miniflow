@@ -11,5 +11,4 @@ def load_data():
     data=np.loadtxt('data/simple_gd_data.txt', delimiter=',')
     x_train = data[:,0]
     y_train = data[:,1]
-    z_train = data[:,2]
-    return x_train, y_train,z_train
+    return x_train, y_train
