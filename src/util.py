@@ -17,7 +17,7 @@ def compute_cost(x, y, w, b):
     for i in range(m):
         predict = np.dot(w, x[i]) + b
         cost = cost + (predict - y[i]) ** 2
-    total_cost = cost/ (2 * m)
+    total_cost = cost / (2 * m)
 
     return total_cost
 
@@ -152,13 +152,36 @@ def multi_feature_linear_regression(x_train, y_train, w_init, b_init, alpha, num
         # compute cost for this pair of (w,b)
         cost_history.append(compute_cost(x_train, y_train, w, b))
 
-        if i % 10 != 0:
-            print(f"Iteration {i:4d}: W {w},B{b}, Cost {cost_history[-1]:8.2f}")
+        if i % 10 == 0:
+            print(
+                f"Iteration {i:4d}: W {w},B{b}, Cost {cost_history[-1]:8.2f}")
 
     return w, b
 
 
 # feature scaling
-def feature_scaling(data):
-    return x_train
+def feature_scaling(data: np.ndarray) -> np.ndarray:
+    '''
+    Feature scaling function
+    :param data: input data
+    :return: scaled data
 
+    Description:
+    Use z-score normalization to scale the data
+
+    Note:
+    The data must be a 1D array  
+    '''
+
+    # 计算均值和标准差
+    mean = data.mean(axis=0)
+    std = data.std(axis=0)
+    
+    # 防止除以零
+    if np.any(std == 0):
+        raise ValueError("One or more features have zero variance.")
+    
+    # 进行 z-score 归一化
+    scaled_data = (data - mean) / std
+
+    return scaled_data
