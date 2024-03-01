@@ -160,28 +160,24 @@ def multi_feature_linear_regression(x_train, y_train, w_init, b_init, alpha, num
 
 
 # feature scaling
-def feature_scaling(data: np.ndarray) -> np.ndarray:
-    '''
-    Feature scaling function
-    :param data: input data
-    :return: scaled data
-
-    Description:
-    Use z-score normalization to scale the data
-
-    Note:
-    The data must be a 1D array  
-    '''
-
-    # 计算均值和标准差
-    mean = data.mean(axis=0)
-    std = data.std(axis=0)
+def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
+    if type == 'z-score':
+        # Z-Score Normalization
+        mean = np.mean(data, axis=0)
+        std = np.std(data, axis=0)
+        normalized_data = (data - mean) / std
+    elif type == 'min-max':
+        # Min-Max Normalization
+        min_val = np.min(data, axis=0)
+        max_val = np.max(data, axis=0)
+        normalized_data = (data - min_val) / (max_val - min_val)
+    elif type == 'mean':
+        # Mean Normalization
+        mean = np.mean(data, axis=0)
+        min_val = np.min(data, axis=0)
+        max_val = np.max(data, axis=0)
+        normalized_data = (data - mean) / (max_val - min_val)
+    else:
+        raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
     
-    # 防止除以零
-    if np.any(std == 0):
-        raise ValueError("One or more features have zero variance.")
-    
-    # 进行 z-score 归一化
-    scaled_data = (data - mean) / std
-
-    return scaled_data
+    return normalized_data
