@@ -1,4 +1,3 @@
-
 from matplotlib import pyplot as plt
 import numpy as np
 import copy
@@ -64,7 +63,6 @@ def simple_linear_regression(x_train, y_train, w_init, b_init, alpha, num_iterat
 
     函数执行简单线性回归，使用梯度下降法优化权重和偏置。
     """
-
     # initialize w and b
     w = copy.deepcopy(w_init)
     b = copy.deepcopy(b_init)
@@ -183,3 +181,150 @@ def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
         raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
 
     return normalized_data
+
+
+"""
+======================================================================
+Logistic Regression
+======================================================================
+"""
+
+
+def sigmoid_function(z):
+    g = 1/(1+np.exp(-z))
+    return g
+
+
+def log_1pexp(x, maximum=20):
+    ''' approximate log(1+exp^x)
+        https://stats.stackexchange.com/questions/475589/numerical-computation-of-cross-entropy-in-practice
+    Args:
+    x   : (ndarray Shape (n,1) or (n,)  input
+    out : (ndarray Shape matches x      output ~= np.log(1+exp(x))
+    '''
+
+    out = np.zeros_like(x, dtype=float)
+    i = x <= maximum
+    ni = np.logical_not(i)
+
+    out[i] = np.log(1 + np.exp(x[i]))
+    out[ni] = x[ni]
+    return out
+
+
+def compute_log_cost(x_train, y_train, w, b, lambda_=0, safe=False):
+    """
+    Computes cost using logistic loss, non-matrix version
+
+    Args:
+      X (ndarray): Shape (m,n)  matrix of examples with n features
+      y (ndarray): Shape (m,)   target values
+      w (ndarray): Shape (n,)   parameters for prediction
+      b (scalar):               parameter  for prediction
+      lambda_ : (scalar, float) Controls amount of regularization, 0 = no regularization
+      safe : (boolean)          True-selects under/overflow safe algorithm
+    Returns:
+      cost (scalar): cost
+    """
+
+    m, n = x_train.shape
+    cost = 0.0
+    for i in range(m):
+        z_i = np.dot(x_train[i], w) + b  # (n,)(n,) or (n,) ()
+        if safe:  # avoids overflows
+            cost += -(y_train[i] * z_i) + log_1pexp(z_i)
+        else:
+            f_wb_i = sigmoid_function(z_i)  # (n,)
+            # scalar
+            cost += -y_train[i] * np.log(f_wb_i) - \
+                (1 - y_train[i]) * np.log(1 - f_wb_i)
+    cost = cost/m
+
+    reg_cost = 0
+    if lambda_ != 0:
+        for j in range(n):
+            # scalar
+            reg_cost += (w[j]**2)
+        reg_cost = (lambda_/(2*m))*reg_cost
+
+    return cost + reg_cost
+
+
+def compute_log_gradient(x_train, y_train, w, b):
+    """
+    Computes the gradient for logistic regression 
+
+    Args:
+      x_train (ndarray (size,features): Data, m examples with n features
+      y_train (ndarray (m,)): target values
+      w (ndarray (features,)): model parameters  
+      b (scalar)      : model parameter
+    Returns
+      dj_dw (ndarray (features,)): The gradient of the cost w.r.t. the parameters w. 
+      dj_db (scalar)      : The gradient of the cost w.r.t. the parameter b. 
+    """
+    size = x_train.shape[0]
+    features = x_train.shape[1]
+    dj_dw = np.zeros(features)
+    dj_db = 0.0  # logistic function, b is a floating point number
+
+    for i in range(size):
+        # x_train[i] i_th row of data
+        f_wb = sigmoid_function(np.dot(x_train[i], w)+b)
+        error = f_wb-y_train[i]
+        for j in range(features):
+            # each features multiply error as the formula (f_wb-y[i])*x[i,j]
+            dj_dw[j] += error*x_train[i, j]
+        dj_db += error
+
+    dj_dw = dj_dw/size
+    dj_db = dj_db/size
+    return dj_dw, dj_db
+
+
+def logistic_regression(x_train, y_train, w_init, b_init, alpha, num_iter):
+    # check if vectors are align
+    if x_train.shape[1] != w_init.shape[0]:
+        print("the column of w and the size of x_train do not match!")
+        return -1
+
+    # init parameters
+    w = copy.deepcopy(w_init)
+    b = copy.deepcopy(b_init)
+    cost_history = []
+
+    # run gradient decent base on iteration
+    for i in range(num_iter):
+        # compute gradient
+        dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b)
+
+        # update parameters
+        w = w - alpha * dj_dw
+        b = b - alpha * dj_db
+ 
+        cost_history.append(compute_log_cost(x_train, y_train, w, b))
+
+        # if i % math.ceil(num_iter / 100) == 0:
+        print(f"Iteration {i:4d}: Cost {cost_history[-1]} : w {w} : b {b}")
+
+    return w, b
+
+
+def plot_decision_boundary(X, y, w, b):
+    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx1, xx2 = np.meshgrid(np.linspace(x1_min, x1_max, 1000),
+                           np.linspace(x2_min, x2_max, 1000))
+
+    # 根据 w 和 b 计算模型的预测
+    Z = w[0] * xx1 + w[1] * xx2 + b
+    Z = 1 / (1 + np.exp(-Z))  # 应用sigmoid函数
+    Z = Z >= 0.5  # 转换为类别
+
+    # 绘制分类边界
+    plt.contourf(xx1, xx2, Z, alpha=0.4)
+    plt.scatter(X[:, 0], X[:, 1], c=y, edgecolors='k')
+
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.title('Custom Logistic Regression Decision Boundary')
