@@ -3,10 +3,12 @@ from matplotlib import pyplot as plt
 import numpy as np
 import copy
 import math
-import pandas as pd
 
-
-# Function to calculate the cost
+"""
+======================================================================
+Linear Regression
+======================================================================
+"""
 
 
 # Function to calculate the cost
@@ -103,7 +105,7 @@ def plot_data_with_linear_fit(x_data, y_data, predicted, scatter_color='r', line
     plt.show()
 
 
-def compute_multi_gradient(x_train, y_train, w, b):
+def compute_linear_gradient(x_train, y_train, w, b):
     size = x_train.shape[0]
     features = x_train.shape[1]
     dj_dw = np.zeros(features)
@@ -143,7 +145,7 @@ def multi_feature_linear_regression(x_train, y_train, w_init, b_init, alpha, num
     # runing gradient decent
     for i in range(num_iterations):
         # compute gradient for w and b
-        dj_dw, dj_db = compute_multi_gradient(x_train, y_train, w, b)
+        dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b)
 
         # update w[] and b
         w = w - alpha * dj_dw
@@ -179,5 +181,5 @@ def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
         normalized_data = (data - mean) / (max_val - min_val)
     else:
         raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
-    
+
     return normalized_data
