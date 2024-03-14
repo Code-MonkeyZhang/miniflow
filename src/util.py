@@ -9,7 +9,6 @@ Linear Regression
 ======================================================================
 """
 
-
 # Function to calculate the cost
 def compute_cost(x, y, w, b):
     m = x.shape[0]
@@ -42,42 +41,6 @@ def compute_gradient(x_train, y_train, w, b):
     dj_db = dj_db / m
 
     return dj_dw, dj_db
-
-
-# gradient descent
-def simple_linear_regression(x_train, y_train, w_init, b_init, alpha, num_iterations):
-    """
-    Perform simple linear regression.
-
-    参数:
-    - x_train: numpy array, 训练数据集的特征值/输入变量。
-    - y_train: numpy array, 训练数据集的目标值/输出变量。
-    - w_init: float, 权重的初始值。
-    - b_init: float, 偏置的初始值。
-    - alpha: float, 学习率，用于控制优化步骤的大小。
-    - num_iterations: int, 梯度下降算法的迭代次数。
-
-    返回:
-    - w: float, 优化后的权重。
-    - b: float, 优化后的偏置。
-
-    函数执行简单线性回归，使用梯度下降法优化权重和偏置。
-    """
-    # initialize w and b
-    w = copy.deepcopy(w_init)
-    b = copy.deepcopy(b_init)
-
-    # compute gradient
-    for i in range(num_iterations):
-        dj_dw, dj_db = compute_gradient(x_train, y_train, w, b)
-
-        # update w and b
-        w = w - alpha * dj_dw
-        b = b - alpha * dj_db
-
-        if i % 10 == 0:
-            print('iteration {}: w = {}, b = {}'.format(i, w, b))
-    return w, b
 
 
 def plot_data_with_linear_fit(x_data, y_data, predicted, scatter_color='r', line_color='b', marker='x'):
@@ -124,9 +87,10 @@ def compute_linear_gradient(x_train, y_train, w, b):
     return dj_dw, dj_db
 
 
-def multi_feature_linear_regression(x_train, y_train, w_init, b_init, alpha, num_iterations):
+def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode='linear'):
+    print(f"Performing {mode} regression")
     """
-    Perform multi-feature linear regression.
+    Perform multi-feature regression.
     x_train has multiple features
     """
 
@@ -143,7 +107,11 @@ def multi_feature_linear_regression(x_train, y_train, w_init, b_init, alpha, num
     # runing gradient decent
     for i in range(num_iterations):
         # compute gradient for w and b
-        dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b)
+        if mode == 'linear':
+            dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b)
+        elif mode == 'logistic':
+            dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b)
+
 
         # update w[] and b
         w = w - alpha * dj_dw
@@ -159,36 +127,12 @@ def multi_feature_linear_regression(x_train, y_train, w_init, b_init, alpha, num
     return w, b
 
 
-# feature scaling
-def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
-    if type == 'z-score':
-        # Z-Score Normalization
-        mean = np.mean(data, axis=0)
-        std = np.std(data, axis=0)
-        normalized_data = (data - mean) / std
-    elif type == 'min-max':
-        # Min-Max Normalization
-        min_val = np.min(data, axis=0)
-        max_val = np.max(data, axis=0)
-        normalized_data = (data - min_val) / (max_val - min_val)
-    elif type == 'mean':
-        # Mean Normalization
-        mean = np.mean(data, axis=0)
-        min_val = np.min(data, axis=0)
-        max_val = np.max(data, axis=0)
-        normalized_data = (data - mean) / (max_val - min_val)
-    else:
-        raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
-
-    return normalized_data
-
 
 """
 ======================================================================
 Logistic Regression
 ======================================================================
 """
-
 
 def sigmoid_function(z):
     g = 1/(1+np.exp(-z))
@@ -197,7 +141,6 @@ def sigmoid_function(z):
 
 def log_1pexp(x, maximum=20):
     ''' approximate log(1+exp^x)
-        https://stats.stackexchange.com/questions/475589/numerical-computation-of-cross-entropy-in-practice
     Args:
     x   : (ndarray Shape (n,1) or (n,)  input
     out : (ndarray Shape matches x      output ~= np.log(1+exp(x))
@@ -281,35 +224,6 @@ def compute_log_gradient(x_train, y_train, w, b):
     dj_db = dj_db/size
     return dj_dw, dj_db
 
-
-def logistic_regression(x_train, y_train, w_init, b_init, alpha, num_iter):
-    # check if vectors are align
-    if x_train.shape[1] != w_init.shape[0]:
-        print("the column of w and the size of x_train do not match!")
-        return -1
-
-    # init parameters
-    w = copy.deepcopy(w_init)
-    b = copy.deepcopy(b_init)
-    cost_history = []
-
-    # run gradient decent base on iteration
-    for i in range(num_iter):
-        # compute gradient
-        dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b)
-
-        # update parameters
-        w = w - alpha * dj_dw
-        b = b - alpha * dj_db
- 
-        cost_history.append(compute_log_cost(x_train, y_train, w, b))
-
-        # if i % math.ceil(num_iter / 100) == 0:
-        print(f"Iteration {i:4d}: Cost {cost_history[-1]} : w {w} : b {b}")
-
-    return w, b
-
-
 def plot_decision_boundary(X, y, w, b):
     x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
@@ -328,3 +242,34 @@ def plot_decision_boundary(X, y, w, b):
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
     plt.title('Custom Logistic Regression Decision Boundary')
+
+
+"""
+======================================================================
+Others
+======================================================================
+"""
+
+# feature scaling
+def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
+    if type == 'z-score':
+        # Z-Score Normalization
+        mean = np.mean(data, axis=0)
+        std = np.std(data, axis=0)
+        normalized_data = (data - mean) / std
+    elif type == 'min-max':
+        # Min-Max Normalization
+        min_val = np.min(data, axis=0)
+        max_val = np.max(data, axis=0)
+        normalized_data = (data - min_val) / (max_val - min_val)
+    elif type == 'mean':
+        # Mean Normalization
+        mean = np.mean(data, axis=0)
+        min_val = np.min(data, axis=0)
+        max_val = np.max(data, axis=0)
+        normalized_data = (data - mean) / (max_val - min_val)
+    else:
+        raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
+
+    return normalized_data
+
