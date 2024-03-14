@@ -3,6 +3,48 @@ import numpy as np
 import copy
 import math
 
+
+def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode,lambda_=0):
+    print(f"Performing {mode} regression")
+    """
+    Perform multi-feature regression.
+    x_train has multiple features
+    """
+
+    # check if the vectors are aligned
+    if x_train.shape[1] != w_init.shape[0]:
+        print("the column of w and the size of x_train do not match!")
+        return -1
+
+    # init variables
+    w = copy.deepcopy(w_init)
+    b = b_init
+    cost_history = []
+
+    # runing gradient decent
+    for i in range(num_iterations):
+        # compute gradient for w and b
+        if mode == 'linear':
+            dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b,lambda_)
+        elif mode == 'logistic':
+            dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b,lambda_)
+
+
+        # update w[] and b
+        w = w - alpha * dj_dw
+        b = b - alpha * dj_db
+
+        # compute cost for this pair of (w,b)
+        cost_history.append(compute_linear_cost(x_train, y_train, w, b))
+
+        if i % 10 == 0:
+            print(
+                f"Iteration {i:4d}: W {w},B{b}, Cost {cost_history[-1]:8.2f}")
+
+    return w, b
+
+
+
 """
 ======================================================================
 Linear Regression
@@ -10,8 +52,9 @@ Linear Regression
 """
 
 # Function to calculate the cost
-def compute_cost(x, y, w, b):
+def compute_linear_cost(x, y, w, b,lambda_=0):
     m = x.shape[0]
+    n=x.shape[1]
     cost = 0
 
     for i in range(m):
@@ -19,6 +62,9 @@ def compute_cost(x, y, w, b):
         cost = cost + (predict - y[i]) ** 2
     total_cost = cost / (2 * m)
 
+    # add regularization term
+    for i in range(n):
+        total_cost += (lambda_/(2*m))*w[i]**2
     return total_cost
 
 
@@ -66,7 +112,7 @@ def plot_data_with_linear_fit(x_data, y_data, predicted, scatter_color='r', line
     plt.show()
 
 
-def compute_linear_gradient(x_train, y_train, w, b):
+def compute_linear_gradient(x_train, y_train, w, b, lambda_=0):
     size = x_train.shape[0]
     features = x_train.shape[1]
     dj_dw = np.zeros(features)
@@ -84,47 +130,11 @@ def compute_linear_gradient(x_train, y_train, w, b):
     dj_dw = dj_dw / size
     dj_db = dj_db / size
 
+    for j in range(features):
+        dj_dw[j] += lambda_ * w[j] / size
+
     return dj_dw, dj_db
 
-
-def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode='linear'):
-    print(f"Performing {mode} regression")
-    """
-    Perform multi-feature regression.
-    x_train has multiple features
-    """
-
-    # check if the vectors are aligned
-    if x_train.shape[1] != w_init.shape[0]:
-        print("the column of w and the size of x_train do not match!")
-        return -1
-
-    # init variables
-    w = copy.deepcopy(w_init)
-    b = b_init
-    cost_history = []
-
-    # runing gradient decent
-    for i in range(num_iterations):
-        # compute gradient for w and b
-        if mode == 'linear':
-            dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b)
-        elif mode == 'logistic':
-            dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b)
-
-
-        # update w[] and b
-        w = w - alpha * dj_dw
-        b = b - alpha * dj_db
-
-        # compute cost for this pair of (w,b)
-        cost_history.append(compute_cost(x_train, y_train, w, b))
-
-        if i % 10 == 0:
-            print(
-                f"Iteration {i:4d}: W {w},B{b}, Cost {cost_history[-1]:8.2f}")
-
-    return w, b
 
 
 
@@ -193,7 +203,7 @@ def compute_log_cost(x_train, y_train, w, b, lambda_=0, safe=False):
     return cost + reg_cost
 
 
-def compute_log_gradient(x_train, y_train, w, b):
+def compute_log_gradient(x_train, y_train, w, b,lambda_=0):
     """
     Computes the gradient for logistic regression 
 
@@ -222,6 +232,9 @@ def compute_log_gradient(x_train, y_train, w, b):
 
     dj_dw = dj_dw/size
     dj_db = dj_db/size
+
+    for j in range(features):
+        dj_dw[j] += lambda_ * w[j] / size
     return dj_dw, dj_db
 
 def plot_decision_boundary(X, y, w, b):
