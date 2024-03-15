@@ -2,9 +2,10 @@ from matplotlib import pyplot as plt
 import numpy as np
 import copy
 import math
+from typing import List
 
 
-def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode,lambda_=0):
+def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, lambda_=0):
     print(f"Performing {mode} regression")
     """
     Perform multi-feature regression.
@@ -25,10 +26,9 @@ def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode,lam
     for i in range(num_iterations):
         # compute gradient for w and b
         if mode == 'linear':
-            dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b,lambda_)
+            dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b, lambda_)
         elif mode == 'logistic':
-            dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b,lambda_)
-
+            dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b, lambda_)
 
         # update w[] and b
         w = w - alpha * dj_dw
@@ -44,17 +44,17 @@ def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode,lam
     return w, b
 
 
-
 """
 ======================================================================
 Linear Regression
 ======================================================================
 """
 
+
 # Function to calculate the cost
-def compute_linear_cost(x, y, w, b,lambda_=0):
+def compute_linear_cost(x, y, w, b, lambda_=0):
     m = x.shape[0]
-    n=x.shape[1]
+    n = x.shape[1]
     cost = 0
 
     for i in range(m):
@@ -64,7 +64,7 @@ def compute_linear_cost(x, y, w, b,lambda_=0):
 
     # add regularization term
     for i in range(n):
-        total_cost += (lambda_/(2*m))*w[i]**2
+        total_cost += (lambda_ / (2 * m)) * w[i] ** 2
     return total_cost
 
 
@@ -136,16 +136,15 @@ def compute_linear_gradient(x_train, y_train, w, b, lambda_=0):
     return dj_dw, dj_db
 
 
-
-
 """
 ======================================================================
 Logistic Regression
 ======================================================================
 """
 
+
 def sigmoid_function(z):
-    g = 1/(1+np.exp(-z))
+    g = 1 / (1 + np.exp(-z))
     return g
 
 
@@ -190,20 +189,20 @@ def compute_log_cost(x_train, y_train, w, b, lambda_=0, safe=False):
             f_wb_i = sigmoid_function(z_i)  # (n,)
             # scalar
             cost += -y_train[i] * np.log(f_wb_i) - \
-                (1 - y_train[i]) * np.log(1 - f_wb_i)
-    cost = cost/m
+                    (1 - y_train[i]) * np.log(1 - f_wb_i)
+    cost = cost / m
 
     reg_cost = 0
     if lambda_ != 0:
         for j in range(n):
             # scalar
-            reg_cost += (w[j]**2)
-        reg_cost = (lambda_/(2*m))*reg_cost
+            reg_cost += (w[j] ** 2)
+        reg_cost = (lambda_ / (2 * m)) * reg_cost
 
     return cost + reg_cost
 
 
-def compute_log_gradient(x_train, y_train, w, b,lambda_=0):
+def compute_log_gradient(x_train, y_train, w, b, lambda_=0):
     """
     Computes the gradient for logistic regression 
 
@@ -223,19 +222,20 @@ def compute_log_gradient(x_train, y_train, w, b,lambda_=0):
 
     for i in range(size):
         # x_train[i] i_th row of data
-        f_wb = sigmoid_function(np.dot(x_train[i], w)+b)
-        error = f_wb-y_train[i]
+        f_wb = sigmoid_function(np.dot(x_train[i], w) + b)
+        error = f_wb - y_train[i]
         for j in range(features):
             # each features multiply error as the formula (f_wb-y[i])*x[i,j]
-            dj_dw[j] += error*x_train[i, j]
+            dj_dw[j] += error * x_train[i, j]
         dj_db += error
 
-    dj_dw = dj_dw/size
-    dj_db = dj_db/size
+    dj_dw = dj_dw / size
+    dj_db = dj_db / size
 
     for j in range(features):
         dj_dw[j] += lambda_ * w[j] / size
     return dj_dw, dj_db
+
 
 def plot_decision_boundary(X, y, w, b):
     x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
@@ -259,9 +259,58 @@ def plot_decision_boundary(X, y, w, b):
 
 """
 ======================================================================
+Dense Layer
+======================================================================
+"""
+
+
+def Dense(a_in, W, b) -> np.ndarray:
+
+    pass
+def Sequential():
+    pass
+
+# class model:
+#     def __init__(self) -> None:
+#         pass
+#
+#     def Sequential(self, dense_array: List[Dense]) -> np.ndarray:
+#         """
+#         Args:
+#         dense_array (ndarray):
+#         activation_function (str):
+#         Returns:
+#         a_out (ndarray):
+#         """
+#         pass
+#
+#     def compile(self):
+#         pass
+#
+#     def fit(self):
+#         pass
+#
+#     def evaluate(self):
+#         pass
+#
+#
+# class Dense:
+#     """
+#     Dense layer Class
+#     """
+#     def __init__(self, units: int, active: str):
+#         # init variables
+#         self.units = units
+#         self.active = active
+#
+
+
+"""
+======================================================================
 Others
 ======================================================================
 """
+
 
 # feature scaling
 def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
@@ -285,4 +334,3 @@ def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
         raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
 
     return normalized_data
-
