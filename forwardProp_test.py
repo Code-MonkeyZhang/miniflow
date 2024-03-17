@@ -1,5 +1,6 @@
-import sys
-from pathlib import Path
+import warnings
+from src.Model_class import *
+from src.Layer_class import *
 from src.util import *
 import numpy as np
 
@@ -17,18 +18,21 @@ print(f"W3 shape = {W3.shape}, b3 shape = {b3.shape}")
 
 model = Model(
     [
-        Dense(25, activation="sigmoid", name="layer1"),
-        Dense(15, activation="sigmoid", name="layer2"),
-        Dense(1, activation="sigmoid", name="layer3"),
+        Layer(25, activation="sigmoid", name="layer1"),
+        Layer(15, activation="sigmoid", name="layer2"),
+        Layer(1, activation="sigmoid", name="layer3"),
     ], name="my_model")
 
 model.dense_array[0].set_weights(W1, b1)
 model.dense_array[1].set_weights(W2, b2)
 model.dense_array[2].set_weights(W3, b3)
 
-print(f"W1 shape = {model.dense_array[0].Weights.shape}, b1 shape = {model.dense_array[0].Biases.shape}")
-print(f"W2 shape = {model.dense_array[1].Weights.shape}, b2 shape = {model.dense_array[1].Biases.shape}")
-print(f"W3 shape = {model.dense_array[2].Weights.shape}, b3 shape = {model.dense_array[2].Biases.shape}")
+print(
+    f"W1 shape = {model.dense_array[0].Weights.shape}, b1 shape = {model.dense_array[0].Biases.shape}")
+print(
+    f"W2 shape = {model.dense_array[1].Weights.shape}, b2 shape = {model.dense_array[1].Biases.shape}")
+print(
+    f"W3 shape = {model.dense_array[2].Weights.shape}, b3 shape = {model.dense_array[2].Biases.shape}")
 
 
 # Load Data
@@ -51,7 +55,6 @@ print(Prediction.shape)
 Yhat = (Prediction >= 0.5).astype(int)
 print("predict a zero: ", Yhat[0], "predict a one: ", Yhat[500])
 
-import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 # You do not need to modify anything in this cell
@@ -59,7 +62,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 m, n = X.shape
 
 fig, axes = plt.subplots(8, 8, figsize=(8, 8))
-fig.tight_layout(pad=0.1, rect=[0, 0.03, 1, 0.92])  # [left, bottom, right, top]
+# [left, bottom, right, top]
+fig.tight_layout(pad=0.1, rect=[0, 0.03, 1, 0.92])
 
 for i, ax in enumerate(axes.flat):
     # Select random indices
