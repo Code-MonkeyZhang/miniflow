@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import copy
 import math
-from typing import List
+from typing import List, Callable
 
 
 def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, lambda_=0):
@@ -22,7 +22,7 @@ def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, la
     b = b_init
     cost_history = []
 
-    # runing gradient decent
+    # running gradient decent
     for i in range(num_iterations):
         # compute gradient for w and b
         if mode == 'linear':
@@ -263,46 +263,87 @@ Dense Layer
 ======================================================================
 """
 
+#
+# def myDense(units, a_in: np.ndarray, W: np.ndarray, b: np.ndarray, active_func: Callable) -> np.ndarray:
+#     # init variables
+#     units = a_in.shape[1]
+#     a_out = np.zeros(units)
+#     # iterate and compute each node
+#     for i in range(units):
+#         w = W[:, i]
+#         a = np.dot(w, a_in) + b[i]
+#         a_out[i] = active_func(a)
+#     return a_out
+#
+#
+# def mySequential(x, W, b):
+#     a1 = myDense(x, W[0], b[0], "sigmoid")
+#     a2 = myDense(a1, W[1], b[1], "sigmoid")
+#     a3 = myDense(a2, W[2], b[2], "sigmoid")
+#     final_output = a3
+#     return final_output
+#
 
-def Dense(a_in, W, b) -> np.ndarray:
+'''
+Use Case:
+model = Sequential(
+    [               
+        Dense(25, activation="sigmoid", name="layer1"),
+        Dense(15, activation="sigmoid", name="layer2"),
+        Dense(1, activation="sigmoid", name="layer3"),
+    ], name = "my_model" )
+'''
 
-    pass
-def Sequential():
-    pass
 
-# class model:
-#     def __init__(self) -> None:
-#         pass
-#
-#     def Sequential(self, dense_array: List[Dense]) -> np.ndarray:
-#         """
-#         Args:
-#         dense_array (ndarray):
-#         activation_function (str):
-#         Returns:
-#         a_out (ndarray):
-#         """
-#         pass
-#
-#     def compile(self):
-#         pass
-#
-#     def fit(self):
-#         pass
-#
-#     def evaluate(self):
-#         pass
-#
-#
-# class Dense:
-#     """
-#     Dense layer Class
-#     """
-#     def __init__(self, units: int, active: str):
-#         # init variables
-#         self.units = units
-#         self.active = active
-#
+class Dense:
+    """
+    Dense layer Class
+    """
+
+    def __init__(self, units: int, activation: str, name='layer'):
+        # init variables
+        self.units = units
+        self.activation = activation
+        self.name = name
+        self.Weights = None
+        self.Biases = None
+
+    def compute_layer(self, a_in: np.ndarray) -> np.ndarray:
+        # init variables
+        # iterate and compute each node
+        a = np.dot(a_in, self.Weights) + self.Biases
+        if self.activation == "sigmoid":
+            a_out = sigmoid_function(a_in)
+        return a
+
+    @staticmethod
+    def sigmoid_function(z):
+        g = 1 / (1 + np.exp(-z))
+        return g
+
+    def set_weights(self, w: np.ndarray, b: np.ndarray):
+        self.Weights = w
+        self.Biases = b
+
+
+class Model:
+    def __init__(self, dense_array: List[Dense], name='model') -> None:
+        self.dense_array = dense_array
+        self.name = name
+
+    def predict(self, x: np.ndarray) -> np.ndarray:
+        for dense_layer in self.dense_array:
+            x = dense_layer.compute_layer(x)
+        return x
+
+    # TBD
+    # def fit(self, X_train, y_train, epochs):
+    #     # perform backward prop
+    #     pass
+    # def evaluate(self):
+    #     pass
+    # def get_weights(self):
+    #     pass
 
 
 """
