@@ -1,21 +1,29 @@
 import warnings
+import sys
+from pathlib import Path
+# 构建到src目录的路径
+src_path = Path('../../src').resolve().as_posix()
+# 添加src目录到sys.path
+sys.path.append(src_path)
+
 from src.Model_class import *
 from src.Layer_class import *
 from src.util import *
 import numpy as np
 
 # Load Weights
-W1 = np.load('data/minst_data/weights/W1.npy', allow_pickle=True)
-W2 = np.load('data/minst_data/weights/W2.npy', allow_pickle=True)
-W3 = np.load('data/minst_data/weights/W3.npy', allow_pickle=True)
-b1 = np.load('data/minst_data/weights/b1.npy', allow_pickle=True)
-b2 = np.load('data/minst_data/weights/b2.npy', allow_pickle=True)
-b3 = np.load('data/minst_data/weights/b3.npy', allow_pickle=True)
+W1 = np.load('../../data/minst_data/weights/W1.npy', allow_pickle=True)
+W2 = np.load('../../data/minst_data/weights/W2.npy', allow_pickle=True)
+W3 = np.load('../../data/minst_data/weights/W3.npy', allow_pickle=True)
+b1 = np.load('../../data/minst_data/weights/b1.npy', allow_pickle=True)
+b2 = np.load('../../data/minst_data/weights/b2.npy', allow_pickle=True)
+b3 = np.load('../../data/minst_data/weights/b3.npy', allow_pickle=True)
 
 print(f"W1 shape = {W1.shape}, b1 shape = {b1.shape}")
 print(f"W2 shape = {W2.shape}, b2 shape = {b2.shape}")
 print(f"W3 shape = {W3.shape}, b3 shape = {b3.shape}")
 
+# Init Model
 model = Model(
     [
         Layer(25, activation="sigmoid", name="layer1"),
@@ -38,9 +46,9 @@ print(
 # Load Data
 def load_data():
     X = np.load(
-        "/Users/zhangyufeng/Library/CloudStorage/OneDrive-ThePennsylvaniaStateUniversity/WorkPlace/Personal Project/YNN/data/minst_data/X.npy")
+        "../../data/minst_data/X.npy")
     y = np.load(
-        "/Users/zhangyufeng/Library/CloudStorage/OneDrive-ThePennsylvaniaStateUniversity/WorkPlace/Personal Project/YNN/data/minst_data/y.npy")
+        "../../data/minst_data/y.npy")
 
     return X, y
 
@@ -54,7 +62,6 @@ print(Prediction.shape)
 
 Yhat = (Prediction >= 0.5).astype(int)
 print("predict a zero: ", Yhat[0], "predict a one: ", Yhat[500])
-
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 # You do not need to modify anything in this cell
