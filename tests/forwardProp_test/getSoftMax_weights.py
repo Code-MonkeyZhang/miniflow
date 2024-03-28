@@ -1,50 +1,58 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from src.Model_class import *
+from tensorflow.keras import layers, models
+import matplotlib.pyplot as plt
 
+mnist = tf.keras.datasets.mnist
 
-model = Sequential(
-    [
-        ### START CODE HERE ###
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0  # 归一化
 
-        # layer1: The shape of W1 is (400, 25) and the shape of b1 is (25,)
-        # layer2: The shape of W2 is (25, 15) and the shape of b2 is: (15,)
-        # layer3: The shape of W3 is (15, 10) and the shape of b3 is: (10,)
-        tf.keras.Input(shape=(400,)),
-        Dense(25, activation='relu', name="L1"),
-        Dense(15, activation='relu', name="L2"),
-        Dense(10, activation='linear', name="L3"),
+model = models.Sequential([
+    layers.Flatten(input_shape=(28, 28)),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(10, activation='softmax')
+])
 
-        ### END CODE HERE ###
-    ], name="my_model"
-)
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
-X = np.load("../../data/minst_data/X.npy")
-y = np.load("../../data/minst_data/Y.npy")
+model.fit(x_train, y_train, epochs=5)
+model.evaluate(x_test, y_test)
+predictions = model.predict(x_test)
 
-model.compile(
-    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-)
+layers = model.layers
+for i, layer in enumerate(model.layers):
+    weights = layer.get_weights()  # This gets both weights and biases, if they exist.
+    if len(weights) > 0:  # Check if the layer has weights
+        weight_file_path = f'layer_{i}_weights.npy'
+        # np.save(weight_file_path, weights[0])  # Save the weights
+        print(f"Saved weights to {weight_file_path}")
 
-history = model.fit(
-    X, y,
-    epochs=40
-)
-[layer1, layer2, layer3] = model.layers
-W1, b1 = layer1.get_weights()
-W2, b2 = layer2.get_weights()
-W3, b3 = layer3.get_weights()
+        if len(weights) > 1:  # Check if the layer has biases
+            bias_file_path = f'layer_{i}_biases.npy'
+            # np.save(bias_file_path, weights[1])  # Save the biases
+            print(f"Saved biases to {bias_file_path}")
 
-print(f"W1 shape = {W1.shape}, b1 shape = {b1.shape}")
-print(f"W2 shape = {W2.shape}, b2 shape = {b2.shape}")
-print(f"W3 shape = {W3.shape}, b3 shape = {b3.shape}")
-np.save('../../data/minst_data/SoftMax_weights/W1.npy', W1)
-np.save('../../data/minst_data/SoftMax_weights/b1.npy', b1)
-np.save('../../data/minst_data/SoftMax_weights/W2.npy', W2)
-np.save('../../data/minst_data/SoftMax_weights/b2.npy', b2)
-np.save('../../data/minst_data/SoftMax_weights/W3.npy', W3)
-np.save('../../data/minst_data/SoftMax_weights/b3.npy', b3)
-print("Weights and biases are saved successfully.")
+# 选择要可视化的样本数量
+num_samples = 20
+fig, axes = plt.subplots(1, num_samples, figsize=(20, 2))
+
+for i, ax in enumerate(axes):
+    # 选择一个随机索引
+    idx = np.random.choice(x_test.shape[0])
+
+    # 绘制图像
+    ax.imshow(x_test[idx], cmap='gray')
+    ax.axis('off')
+
+    # 获取真实标签和预测标签
+    true_label = y_test[idx]
+    predicted_label = np.argmax(predictions[idx])
+
+    # 设置标题显示真实标签和预测标签
+    ax.set_title(f"True: {true_label}\nPred: {predicted_label}")
+
+plt.tight_layout()
+plt.show()
