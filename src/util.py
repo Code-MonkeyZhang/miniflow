@@ -3,6 +3,8 @@ import numpy as np
 import copy
 import math
 from typing import List, Callable
+from src.activation import *
+
 
 
 def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, lambda_=0):
@@ -26,9 +28,11 @@ def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, la
     for i in range(num_iterations):
         # compute gradient for w and b
         if mode == 'linear':
-            dj_dw, dj_db = compute_linear_gradient(x_train, y_train, w, b, lambda_)
+            dj_dw, dj_db = compute_linear_gradient(
+                x_train, y_train, w, b, lambda_)
         elif mode == 'logistic':
-            dj_dw, dj_db = compute_log_gradient(x_train, y_train, w, b, lambda_)
+            dj_dw, dj_db = compute_log_gradient(
+                x_train, y_train, w, b, lambda_)
 
         # update w[] and b
         w = w - alpha * dj_dw
@@ -120,7 +124,8 @@ def compute_linear_gradient(x_train, y_train, w, b, lambda_=0):
 
     # 遍历每一行数据
     for i in range(size):
-        error = (np.dot(x_train[i], w) + b - y_train[i])
+        f_wb = linear_function(x_train[i], w, b)
+        error = (f_wb - y_train[i])
         # 遍历每一个feature
         for j in range(features):
             dj_dw[j] += error * x_train[i, j]  # 计算每个feature的导数，然后累加起来，方便后面求平均
@@ -141,11 +146,6 @@ def compute_linear_gradient(x_train, y_train, w, b, lambda_=0):
 Logistic Regression
 ======================================================================
 """
-
-
-def sigmoid_function(z):
-    g = 1 / (1 + np.exp(-z))
-    return g
 
 
 def log_1pexp(x, maximum=20):
@@ -189,7 +189,7 @@ def compute_log_cost(x_train, y_train, w, b, lambda_=0, safe=False):
             f_wb_i = sigmoid_function(z_i)  # (n,)
             # scalar
             cost += -y_train[i] * np.log(f_wb_i) - \
-                    (1 - y_train[i]) * np.log(1 - f_wb_i)
+                (1 - y_train[i]) * np.log(1 - f_wb_i)
     cost = cost / m
 
     reg_cost = 0
@@ -258,7 +258,7 @@ def plot_decision_boundary(X, y, w, b):
 
 
 """
-======================================================================
+
 Dense Layer
 ======================================================================
 """
@@ -345,12 +345,6 @@ class Model:
     # def get_weights(self):
     #     pass
 
-
-"""
-======================================================================
-Others
-======================================================================
-"""
 
 
 # feature scaling
