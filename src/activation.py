@@ -8,3 +8,7 @@ def linear_function(x_train, w, b):
 def sigmoid_function(z):
     g = 1 / (1 + np.exp(-z))
     return g
+
+
+def relu_function(z):
+    return np.maximum(0, z)

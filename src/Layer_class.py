@@ -23,7 +23,11 @@ class Layer:
             z = np.dot(a_in, self.Weights) + self.Biases
             a_out = sigmoid_function(z)
         if self.activation == "linear":
-            a_out = np.dot(a_in, self.Weights) + self.Biases
+            a_out = linear_function(a_in, self.Weights, self.Biases)
+        if self.activation == "relu":
+            # Linear
+            z = linear_function(a_in, self.Weights, self.Biases)
+            a_out = relu_function(z)
         if self.activation == 'softmax':
             a_out = np.zeros(self.units)
             z = np.zeros(self.units)
