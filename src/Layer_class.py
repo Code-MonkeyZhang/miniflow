@@ -51,3 +51,15 @@ class Layer:
     def set_weights(self, w: np.ndarray, b: np.ndarray):
         self.Weights = w
         self.Biases = b
+
+
+class FlattenLayer(Layer):
+    def __init__(self, input_shape, name='Flatten'):
+        # 由于Flatten层不需要units和activation，我们可以传递默认值或None
+        super().__init__(units=0, activation=None, name=name)
+        self.input_shape = input_shape
+
+    def compute_layer(self, input_array):
+        num_elements = np.prod(input_array.shape[1:])
+        output_array = input_array.reshape((input_array.shape[0], num_elements))
+        return output_array
