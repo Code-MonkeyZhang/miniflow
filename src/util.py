@@ -3,7 +3,7 @@ import numpy as np
 import copy
 import math
 from typing import List, Callable
-from src.activation import *
+from activation import *
 
 
 def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, lambda_=0):
