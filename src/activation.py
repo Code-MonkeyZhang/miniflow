@@ -2,7 +2,7 @@ import numpy as np
 
 
 def linear_function(x_train, w, b):
-    return np.dot(x_train, w) + b
+    return np.dot(x_train, w.T) + b
 
 
 def sigmoid_function(z):
