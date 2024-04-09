@@ -22,15 +22,21 @@ model.fit(x_train, y_train, epochs=5)
 model.evaluate(x_test, y_test)
 predictions = model.predict(x_test)
 
-layers = model.layers
-for i, layer in enumerate(model.layers):
-    weights = layer.get_weights()  # This gets both weights and biases, if they exist.
-    if len(weights) > 0:  # Check if the layer has weights
-        weight_file_path = f'layer_{i}_weights.npy'
-        # np.save(weight_file_path, weights[0])  # Save the weights
-        print(f"Saved weights to {weight_file_path}")
+# layers = model.layers
+[layer1, layer2] = model.layers[1:]
+W1, b1 = layer1.get_weights()
+W2, b2 = layer2.get_weights()
+print(W1.shape, W2.shape, b1.shape, b2.shape)
 
-        if len(weights) > 1:  # Check if the layer has biases
-            bias_file_path = f'layer_{i}_biases.npy'
-            # np.save(bias_file_path, weights[1])  # Save the biases
-            print(f"Saved biases to {bias_file_path}")
+#
+# for i, layer in enumerate(model.layers):
+#     weights = layer.get_weights()  # This gets both weights and biases, if they exist.
+#     if len(weights) > 0:  # Check if the layer has weights
+#         weight_file_path = f'layer_{i}_weights.npy'
+#         # np.save(weight_file_path, weights[0])  # Save the weights
+#         print(f"Saved weights to {weight_file_path}")
+#
+#         if len(weights) > 1:  # Check if the layer has biases
+#             bias_file_path = f'layer_{i}_biases.npy'
+#             # np.save(bias_file_path, weights[1])  # Save the biases
+#             print(f"Saved biases to {bias_file_path}")
