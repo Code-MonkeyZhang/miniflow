@@ -38,10 +38,10 @@ print(y_train.shape)
 
 model = Model(
     [
-        FlattenLayer(input_shape=(28, 28), name='Flatten'),
-        Layer(25, activation="relu", name="L1", input_shape=784),
-        Layer(10, activation='softmax', name="L2", input_shape=25),
-    ], name="my_model",cost="softmax")
+        FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
+        Layer(25, activation="relu", layer_name="L1", input_shape=784),
+        Layer(10, activation='softmax', layer_name="L2", input_shape=25),
+    ], name="my_model", cost="softmax")
 
 print(
     f"W1 shape = {model.dense_array[0].Weights.shape}, b1 shape = {model.dense_array[0].Biases.shape}")
@@ -54,8 +54,36 @@ print(
 x_single = x_train[0:1]  # 保持批次维度，形状变为(1, 28, 28)
 y_single = y_train[0:1]  # 保持批次维度，形状变为(1,)
 
+sample_size = 60000
+x_samples = x_train[0:sample_size]  # 提取前100个样本，形状变为(100, 28, 28)
+y_samples = y_train[0:sample_size]  # 提取前100个标签，形状变为(100,)
 
 model.set_rand_weight()
 
 # Train the model
-model.fit(x_train, y_train, learningRate=0.0001, epochs=1)
+model.fit(x_samples, y_samples, learningRate=0.000001, epochs=5)
+
+# Do prediction
+# predictions = model.predict(x_test)
+
+# # Display Prediction
+# # 选择要可视化的样本数量
+# num_samples = 10
+# fig, axes = plt.subplots(1, num_samples, figsize=(20, 2))
+#
+# for i, ax in enumerate(axes):
+#     # 选择一个随机索引
+#     idx = np.random.choice(x_test.shape[0])
+#     # 绘制图像
+#     ax.imshow(x_test[idx], cmap='gray')
+#     ax.axis('off')
+#
+#     # 获取真实标签和预测标签
+#     true_label = y_test[idx]
+#     predicted_label = np.argmax(predictions[idx])
+#
+#     # 设置标题显示真实标签和预测标签
+#     ax.set_title(f"True: {true_label}\nPred: {predicted_label}")
+#
+# plt.tight_layout()
+# plt.show()
