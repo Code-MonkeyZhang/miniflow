@@ -74,14 +74,14 @@ y_samples = y_train[0:sample_size]  # 提取前100个标签，形状变为(100,)
 
 ############################## Train the model ########################################
 
-model.fit(x_samples, y_samples, learningRate=0.00001, epochs=10)
+model.fit(x_samples, y_samples, learningRate=0.00001, epochs=50)
 
 # Do prediction
 predictions = model.predict(x_test)
 
 # Display Prediction
 # 选择要可视化的样本数量
-num_samples = 10
+num_samples = 30
 fig, axes = plt.subplots(1, num_samples, figsize=(20, 2))
 
 for i, ax in enumerate(axes):

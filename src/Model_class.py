@@ -40,11 +40,16 @@ class Model:
                     np.newaxis, ...]  # extract one training example, and turn its shape into (1,28,28)
                 label = y_train[i]
 
+                # Manual convert it to one-hot
+                label_one_hot = np.zeros((1, 10))
+                label_one_hot[0, label] = 1
+
                 # do forward prop to compute lost
                 # and save output of each layer
                 prediction = self.predict(train_example)
 
-                epoch_lost += self.compute_loss(prediction, label)
+                epoch_lost += self.compute_loss(prediction, label_one_hot)
+                # print(epoch_lost)
 
                 ###### START TRAINING #####
 
@@ -55,7 +60,7 @@ class Model:
                 for layer, prev_layer_output in reversed(self.layers_output):
                     if layer.activation == "Flatten":
                         break  # ignore Flatten layer
-                    backprop_gradient = layer.train_layer(prev_layer_output, prediction, label, learningRate,
+                    backprop_gradient = layer.train_layer(prev_layer_output, prediction, label_one_hot, learningRate,
                                                           backprop_gradient)
                     # print("Training Layer {}, weights {:.6f}".format(layer.activation, np.mean(layer.Weights)))
 
