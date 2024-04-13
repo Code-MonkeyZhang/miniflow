@@ -63,10 +63,10 @@ model.set_rand_weight()
 # # 为了统一行和列分别代表 神经元数量和feature数量, 设置的时候需要进行转置
 # model.dense_array[1].set_weights(W1.T, b1)
 # model.dense_array[2].set_weights(W2.T, b2)
-
-# 提取第一张图片及其标签
-x_single = x_train[0:1]  # 保持批次维度，形状变为(1, 28, 28)
-y_single = y_train[0:1]  # 保持批次维度，形状变为(1,)
+#
+# # 提取第一张图片及其标签
+# x_single = x_train[0:1]  # 保持批次维度，形状变为(1, 28, 28)
+# y_single = y_train[0:1]  # 保持批次维度，形状变为(1,)
 
 sample_size = 60000
 x_samples = x_train[0:sample_size]  # 提取前100个样本，形状变为(100, 28, 28)
@@ -74,7 +74,7 @@ y_samples = y_train[0:sample_size]  # 提取前100个标签，形状变为(100,)
 
 ############################## Train the model ########################################
 
-model.fit(x_samples, y_samples, learningRate=0.00001, epochs=50)
+model.fit(x_samples, y_samples, learningRate=0.00001, epochs=400)
 
 # Do prediction
 predictions = model.predict(x_test)
@@ -100,3 +100,11 @@ for i, ax in enumerate(axes):
 
 plt.tight_layout()
 plt.show()
+
+# 假设 predictions 是你的模型预测输出，现在你需要将其转换为类别标签
+predictions = np.argmax(predictions, axis=1)  # 获取最大概率的索引作为预测标签
+
+# 计算准确率
+accuracy = np.mean(predictions == y_test)  # 比较预测标签和真实标签，计算准确率
+
+print(f"Test Accuracy: {accuracy * 100:.2f}%")
