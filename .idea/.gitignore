@@ -1,9 +1,3 @@
-*.pyc
-*.xml
-*.iml
-idea/
-vscode/
-venv/
 # Default ignored files
 /shelf/
 /workspace.xml
