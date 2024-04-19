@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+src/miniflow/Layer_class.py
+src/miniflow/Model_class.py
+src/miniflow/__init__.py
+src/miniflow/activation.py
+src/miniflow/util.py
+src/miniflow.egg-info/PKG-INFO
+src/miniflow.egg-info/SOURCES.txt
+src/miniflow.egg-info/dependency_links.txt
+src/miniflow.egg-info/top_level.txt
