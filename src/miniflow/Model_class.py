@@ -1,5 +1,7 @@
 from typing import List
 from .Layer_class import *
+from .util import *
+
 """
 ======================================================================
 Model Class
@@ -28,9 +30,12 @@ class Model:
         print("Start Training")
         for epoch in range(epochs):
             epoch_lost = 0
+            print("Epoch {}/{}  ".format(epoch + 1, epochs))
             # In each epoch we iterate through each training example
             for i in range(X_train.shape[0]):
-                # print("Training Image {}".format(i + 1))
+
+                print_progress_bar(i, X_train.shape[0])
+
                 # Make sure to clear the layers_output at the start of processing each sample
                 self.layers_output.clear()
 
@@ -43,15 +48,12 @@ class Model:
                 label_one_hot[0, label] = 1
 
                 # do forward prop to compute lost
-                # and save output of each layer
                 prediction = self.predict(train_example)
-
                 epoch_lost += self.compute_loss(prediction, label_one_hot)
-                # print(epoch_lost)
 
                 ###### START TRAINING #####
 
-                # init backprop_gradient as all ones, when training from the last layer(output layer)
+                # init backprop_gradient as all ones, when training from the output layer
                 backprop_gradient = np.ones(self.dense_array[-1].get_weights().shape)
 
                 # reverse iterate the layers
@@ -60,21 +62,8 @@ class Model:
                         break  # ignore Flatten layer
                     backprop_gradient = layer.train_layer(prev_layer_output, prediction, label_one_hot, learningRate,
                                                           backprop_gradient)
-                    # print("Training Layer {}, weights {:.6f}".format(layer.activation, np.mean(layer.Weights)))
 
-            print("===============================================================================")
-            print("Epoch {}/{}     Lost {}".format(epoch + 1, epochs, epoch_lost / X_train.shape[0]))
-            # print("Softmax Weights: Avg:{:.6f} Max {:.6f} Min{:.6f}".format(
-            #     np.mean(self.dense_array[-1].get_weights()),
-            #     np.max(self.dense_array[-1].get_weights()),
-            #     np.min(self.dense_array[-1].get_weights())
-            # ))
-            #
-            # print("ReLU Weights: Avg:{:.6f} Max {:.6f} Min{:.6f}".format(
-            #     np.mean(self.dense_array[-2].get_weights()),
-            #     np.max(self.dense_array[-2].get_weights()),
-            #     np.min(self.dense_array[-2].get_weights())
-            # ))
+            print("  Cost {:.6f}".format(epoch_lost / X_train.shape[0]))
 
     def compute_loss(self, prediction, target):
         # 使用交叉熵损失计算损失
@@ -88,9 +77,3 @@ class Model:
     def set_rand_weight(self):
         for layer in self.dense_array:
             layer.set_random_weights()
-
-# def evaluate(self):
-#     pass
-# def get_weights(self):
-#     pass
-# use forward prop to get prediction

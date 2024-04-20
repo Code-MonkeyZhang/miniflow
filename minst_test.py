@@ -4,6 +4,9 @@ import numpy as np
 from src.miniflow import Model
 from src.miniflow import Layer, FlattenLayer
 
+# from miniflow import Model
+# from miniflow import Layer, FlattenLayer
+
 # Load data
 # 设置数据文件的路径
 data_dir = os.path.join(os.path.dirname(__file__), 'data')

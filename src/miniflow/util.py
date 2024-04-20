@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import sys
 
 
 def regression(x_train, y_train, w_init, b_init, alpha, num_iterations, mode, lambda_=0):
@@ -274,3 +275,15 @@ def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
         raise ValueError("Type must be 'z-score', 'min-max', or 'mean'")
 
     return normalized_data
+
+
+def print_progress_bar(i, count, bar_length=50):
+    # 计算完成的比例
+    percent_complete = float(i) / count
+    # 计算已完成的长度
+    filled_length = int(round(bar_length * percent_complete))
+    # 创建进度条的字符表示
+    bar = '#' * filled_length + '.' * (bar_length - filled_length)
+    # 格式化输出进度条
+    sys.stdout.write('\r[%s]' % bar)
+    sys.stdout.flush()
