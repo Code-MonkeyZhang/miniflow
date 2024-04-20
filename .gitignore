@@ -1,7 +1,7 @@
 *.pyc
 *.xml
 *.iml
-
+test.py
 idea/
 vscode/
 venv/
