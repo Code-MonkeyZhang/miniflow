@@ -1,3 +1,4 @@
+import time
 from typing import List
 from .Layer_class import *
 from .util import *
@@ -29,6 +30,8 @@ class Model:
         # perform backward prop
         print("Start Training")
         for epoch in range(epochs):
+            tic = time.time()
+
             epoch_lost = 0
             print("Epoch {}/{}  ".format(epoch + 1, epochs))
             # In each epoch we iterate through each training example
@@ -63,8 +66,8 @@ class Model:
                     backprop_gradient = layer.train_layer(prev_layer_output, prediction, label_one_hot, learningRate,
                                                           backprop_gradient)
 
-            print("  Cost {:.6f}".format(epoch_lost / X_train.shape[0]))
-
+            tok = time.time()
+            print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost / X_train.shape[0], (1000 * (tok - tic))))
     def compute_loss(self, prediction, target):
         # 使用交叉熵损失计算损失
         # 避免对数函数中的数值不稳定，可以添加一个很小的值epsilon到对数函数中
