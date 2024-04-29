@@ -277,13 +277,13 @@ def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
     return normalized_data
 
 
-def print_progress_bar(i, count, bar_length=50):
+def print_progress_bar(index, count, bar_length=50):
     # 计算完成的比例
-    percent_complete = float(i) / count
+    percent_complete = float(index) / count
     # 计算已完成的长度
     filled_length = int(round(bar_length * percent_complete))
     # 创建进度条的字符表示
-    bar = '#' * filled_length + '.' * (bar_length - filled_length)
+    bar = '=' * filled_length + ' ' * (bar_length - filled_length)
     # 格式化输出进度条
     sys.stdout.write('\r[%s]' % bar)
     sys.stdout.flush()
