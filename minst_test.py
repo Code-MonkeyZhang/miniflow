@@ -29,20 +29,20 @@ x_train, x_test = x_train / 255.0, x_test / 255.0  # 归一化
 model = Model(
     [
         FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
-        Layer(25, activation="relu", layer_name="L1", input_shape=784),
-        Layer(10, activation='softmax', layer_name="L2", input_shape=25),
+        Layer(64, activation="relu", layer_name="L1", input_shape=784),
+        Layer(10, activation='softmax', layer_name="L2", input_shape=64),
     ], name="my_model", cost="softmax")
 
 ############################## Load Weights ########################################
 model.set_rand_weight()
 
-sample_size = 60000
+sample_size = 80000
 x_samples = x_train[0:sample_size]  # 提取前100个样本，形状变为(100, 28, 28)
 y_samples = y_train[0:sample_size]  # 提取前100个标签，形状变为(100,)
 
 ############################## Train the model ########################################
 
-model.fit(x_samples, y_samples, learningRate=0.001, epochs=5)
+model.fit(x_samples, y_samples, learningRate=0.05, epochs=12)
 
 # Do prediction
 predictions = model.predict(x_test)
