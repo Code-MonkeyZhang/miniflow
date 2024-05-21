@@ -1,6 +1,0 @@
-README.md
-pyproject.toml
-miniflow/miniflow.egg-info/PKG-INFO
-miniflow/miniflow.egg-info/SOURCES.txt
-miniflow/miniflow.egg-info/dependency_links.txt
-miniflow/miniflow.egg-info/top_level.txt

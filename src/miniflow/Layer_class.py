@@ -3,10 +3,6 @@ import numpy as np
 
 
 class Layer:
-    """
-    layer Class
-    """
-
     def __init__(self, units: int, activation: str, layer_name='layer', input_shape: int = 0):
         self.units = units
         self.activation = activation
@@ -16,49 +12,34 @@ class Layer:
         self.input_shape = input_shape
 
     def compute_layer(self, a_in: np.ndarray) -> np.ndarray:
-        # init variables
-        # iterate and compute each node
+        z = np.dot(a_in, self.Weights.T) + self.Biases
         if self.activation == "sigmoid":
-            z = np.dot(a_in, self.Weights) + self.Biases
             a_out = sigmoid_function(z)
         if self.activation == "linear":
-            a_out = linear_function(a_in, self.Weights, self.Biases)
+            a_out = z
         if self.activation == "relu":
-            # Linear
-            z = linear_function(a_in, self.Weights, self.Biases)
             a_out = relu_function(z)
         if self.activation == 'softmax':
-            z = linear_function(a_in, self.Weights, self.Biases)
-            # print("Softmax Weights: Avg:{:.6f} Max {:.6f} Min{:.6f}".format(
-            #     np.mean(self.get_weights()),
-            #     np.max(self.get_weights()),
-            #     np.min(self.get_weights())
-            # ))
             z_max = np.max(z)
             exp_z = np.exp(z - z_max)  # 减去z中的最大值以避免溢出
             a_out = exp_z / np.sum(exp_z)
-
         return a_out
-
-    """
-    This function performs Two major tasks:
-    - obtain weights and bias
-    - do gradient descent
-    """
 
     def train_layer(self, prev_layer_output, curr_layer_output, label, learningRate,
                     backprop_gradient) -> np.ndarray:
-        # 暂且是这样
+
+        # 对于最后一层 softmax，cost function的求导就是标签相减
+        # 这个计算要单独独立出来，目前先放在这里
         cost_func_gradient = np.subtract(curr_layer_output, label)
+
         # obtain gradients of weights and bias for updates
-        dL_dw, dj_db = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
+        dL_dw, dj_db, dL_dz = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
 
         # 根据 chain rule, 传给上一层的gradient应该是:
         # dl/da = dl/ds * ds/da
-        if self.activation == "softmax":
-            backprop_gradient = np.dot(cost_func_gradient, self.Weights)
+        backprop_gradient = np.dot(dL_dz, self.Weights)
 
-        # do gradient descent, update gradient
+        # perform gradient descent, update gradient
         self.Weights -= learningRate * dL_dw
         self.Biases -= learningRate * dj_db
 
@@ -80,15 +61,12 @@ class Layer:
             relu_output = np.maximum(0, z)
             relu_derivative = (relu_output > 0).astype(float)
 
-            # linear 的一阶导是x,也就是这一层的输入
             dz_dw = prev_layer_output
             dL_dz = backprop_gradient * relu_derivative
-
             dL_dw = np.dot(dL_dz.T, dz_dw)
-
             dL_db = np.mean(dL_dz)
 
-        return dL_dw, dL_db
+        return dL_dw, dL_db, dL_dz
 
     def compute_cost_gradient(self, prediction, label):
         if self.activation == "softmax":
@@ -110,12 +88,18 @@ class Layer:
 
 class FlattenLayer(Layer):
     def __init__(self, input_shape, layer_name='Flatten'):
-        # 由于Flatten层不需要units和activation，我们可以传递默认值或None
+        # Flatten layer doesn't need units & activation
         super().__init__(units=0, layer_name=layer_name, activation="Flatten")
         self.input_shape = input_shape
         self.activation = "Flatten"
 
     def compute_layer(self, input_array):
+        """
+         Flattens each element a 1D array.
+         Example:
+         If input_array has a shape of (1, 28, 28), it will be reshaped to (1,784).
+         """
+
         num_elements = np.prod(input_array.shape[1:])
         output_array = input_array.reshape(
             (input_array.shape[0], num_elements))
