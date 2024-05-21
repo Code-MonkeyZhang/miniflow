@@ -3,10 +3,6 @@ import numpy as np
 
 
 class Layer:
-    """
-    layer Class
-    """
-
     def __init__(self, units: int, activation: str, layer_name='layer', input_shape: int = 0):
         self.units = units
         self.activation = activation
@@ -37,12 +33,11 @@ class Layer:
         cost_func_gradient = np.subtract(curr_layer_output, label)
 
         # obtain gradients of weights and bias for updates
-        dL_dw, dj_db = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
+        dL_dw, dj_db, dL_dz = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
 
         # 根据 chain rule, 传给上一层的gradient应该是:
         # dl/da = dl/ds * ds/da
-        if self.activation == "softmax":
-            backprop_gradient = np.dot(cost_func_gradient, self.Weights)
+        backprop_gradient = np.dot(dL_dz, self.Weights)
 
         # perform gradient descent, update gradient
         self.Weights -= learningRate * dL_dw
@@ -66,15 +61,12 @@ class Layer:
             relu_output = np.maximum(0, z)
             relu_derivative = (relu_output > 0).astype(float)
 
-            # linear 的一阶导是x,也就是这一层的输入
             dz_dw = prev_layer_output
             dL_dz = backprop_gradient * relu_derivative
-
             dL_dw = np.dot(dL_dz.T, dz_dw)
-
             dL_db = np.mean(dL_dz)
 
-        return dL_dw, dL_db
+        return dL_dw, dL_db, dL_dz
 
     def compute_cost_gradient(self, prediction, label):
         if self.activation == "softmax":

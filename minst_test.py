@@ -3,7 +3,7 @@ import numpy as np
 
 from src.miniflow import Model
 from src.miniflow import Layer, FlattenLayer
- 
+
 # from miniflow import Layer, FlattenLayer
 
 # Load data
@@ -47,13 +47,13 @@ x_samples = x_train[0:sample_size]
 y_samples = y_train[0:sample_size]
 
 ############################## Train the model ########################################
-model.set_rand_weight()
-model.fit(x_samples, y_samples, learningRate=0.05, epochs=5)
-predictions = model.predict(x_test)
+# model.set_rand_weight()
+# model.fit(x_samples, y_samples, learningRate=0.05, epochs=5)
+# predictions = model.predict(x_test)
 
-# model2.set_rand_weight()
-# model2.fit(x_samples, y_samples, learningRate=0.05, epochs=5)
-# predictions = model2.predict(x_test)
+model2.set_rand_weight()
+model2.fit(x_samples, y_samples, learningRate=0.005, epochs=30)
+predictions = model2.predict(x_test)
 
 # # Display Prediction
 # # 选择要可视化的样本数量
