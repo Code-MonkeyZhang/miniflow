@@ -3,8 +3,7 @@ import numpy as np
 
 from src.miniflow import Model
 from src.miniflow import Layer, FlattenLayer
-
-# from miniflow import Model
+ 
 # from miniflow import Layer, FlattenLayer
 
 # Load data
@@ -33,19 +32,28 @@ model = Model(
         Layer(10, activation='softmax', layer_name="L2", input_shape=64),
     ], name="my_model", cost="softmax")
 
-############################## Load Weights ########################################
-model.set_rand_weight()
+model2 = Model(
+    [
+        FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
+        Layer(128, activation="relu", layer_name="L1", input_shape=784),
+        Layer(64, activation="relu", layer_name="L2", input_shape=128),
+        Layer(10, activation='softmax', layer_name="L3", input_shape=64),
+    ], name="my_model", cost="softmax")
+
+############################## Load the data ########################################
 
 sample_size = 80000
-x_samples = x_train[0:sample_size]  # 提取前100个样本，形状变为(100, 28, 28)
-y_samples = y_train[0:sample_size]  # 提取前100个标签，形状变为(100,)
+x_samples = x_train[0:sample_size]
+y_samples = y_train[0:sample_size]
 
 ############################## Train the model ########################################
-
-model.fit(x_samples, y_samples, learningRate=0.05, epochs=12)
-
-# Do prediction
+model.set_rand_weight()
+model.fit(x_samples, y_samples, learningRate=0.05, epochs=5)
 predictions = model.predict(x_test)
+
+# model2.set_rand_weight()
+# model2.fit(x_samples, y_samples, learningRate=0.05, epochs=5)
+# predictions = model2.predict(x_test)
 
 # # Display Prediction
 # # 选择要可视化的样本数量
@@ -74,5 +82,4 @@ predictions = np.argmax(predictions, axis=1)  # 获取最大概率的索引作�
 
 # 计算准确率
 accuracy = np.mean(predictions == y_test)  # 比较预测标签和真实标签，计算准确率
-
 print(f"Test Accuracy: {accuracy * 100:.2f}%")
