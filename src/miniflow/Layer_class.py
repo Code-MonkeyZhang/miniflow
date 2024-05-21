@@ -16,35 +16,18 @@ class Layer:
         self.input_shape = input_shape
 
     def compute_layer(self, a_in: np.ndarray) -> np.ndarray:
-        # init variables
-        # iterate and compute each node
+        z = np.dot(a_in, self.Weights.T) + self.Biases
         if self.activation == "sigmoid":
-            z = np.dot(a_in, self.Weights) + self.Biases
             a_out = sigmoid_function(z)
         if self.activation == "linear":
-            a_out = linear_function(a_in, self.Weights, self.Biases)
+            a_out = z
         if self.activation == "relu":
-            # Linear
-            z = linear_function(a_in, self.Weights, self.Biases)
             a_out = relu_function(z)
         if self.activation == 'softmax':
-            z = linear_function(a_in, self.Weights, self.Biases)
-            # print("Softmax Weights: Avg:{:.6f} Max {:.6f} Min{:.6f}".format(
-            #     np.mean(self.get_weights()),
-            #     np.max(self.get_weights()),
-            #     np.min(self.get_weights())
-            # ))
             z_max = np.max(z)
             exp_z = np.exp(z - z_max)  # 减去z中的最大值以避免溢出
             a_out = exp_z / np.sum(exp_z)
-
         return a_out
-
-    """
-    This function performs Two major tasks:
-    - obtain weights and bias
-    - do gradient descent
-    """
 
     def train_layer(self, prev_layer_output, curr_layer_output, label, learningRate,
                     backprop_gradient) -> np.ndarray:
