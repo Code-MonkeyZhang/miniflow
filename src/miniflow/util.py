@@ -322,3 +322,11 @@ def slice2batches(X_train: np.ndarray, y_train: np.ndarray, batch_size: int):
     y_batch_list = np.array_split(y_train, num_batches)
 
     return X_batch_list, y_batch_list
+
+
+def compute_lost(prediction, target):
+    epsilon = 1e-12
+    prediction = np.clip(prediction, epsilon, 1. - epsilon)
+    lost_per_sample = -np.sum(target * np.log(prediction), axis=1)
+    lost = np.mean(lost_per_sample)
+    return lost
