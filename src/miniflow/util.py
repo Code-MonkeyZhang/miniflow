@@ -278,12 +278,47 @@ def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
 
 
 def print_progress_bar(index, count, bar_length=50):
-    # 计算完成的比例
+    """
+    Prints a progress bar in the console.
+    Args:
+        index (int): The current index value representing the progress made.
+        count (int): The total count or number of items to be processed.
+        bar_length (int, optional): The length of the progress bar. Defaults to 50.
+    Example:
+        >>> print_progress_bar(10, 100, bar_length=30)
+        [=========>                             ]
+    """
+
+    # Calculate the completion percentage
     percent_complete = float(index) / count
-    # 计算已完成的长度
+    # Calculate the length of the completed portion
     filled_length = int(round(bar_length * percent_complete))
-    # 创建进度条的字符表示
+    # Create the progress bar character representation
     bar = '=' * filled_length + ' ' * (bar_length - filled_length)
-    # 格式化输出进度条
+    # Format and output the progress bar
     sys.stdout.write('\r[%s]' % bar)
     sys.stdout.flush()
+
+
+def slice2batches(X_train: np.ndarray, y_train: np.ndarray, batch_size: int):
+    """
+    Given the entire training set & its label, cut it into pieces with the size of batch size
+    Args:
+        X_train (numpy): The training set
+        y_train (numpy): The corresponding label set
+        batch_size (int): size of each piece
+    Example:
+        X_train: (64,28,28)
+        y_train: (64,1)
+        batch_size: 32
+
+        train_batch_list, label_batch_list = slice2batches(X_train, y_train, batch_size):
+
+        X_batch_list: [(32,28,28), (32,28,28)]
+        y_batch_list: [(32,1),(32,1)]
+    """
+    num_batches = (len(X_train) + batch_size - 1) // batch_size
+    X_batch_list = np.array_split(X_train, num_batches)
+    y_batch_list = np.array_split(y_train, num_batches)
+
+    return X_batch_list, y_batch_list
