@@ -1,11 +1,21 @@
 import numpy as np
+from src.miniflow.util import compute_cross_entropy_loss
 
-dL_dz_softmax = np.array([[-2.452723, -5.723021, -4.087872],
-                          [2.452723, 5.723021, 4.087872]])
+# 示例数据
+prediction = np.array([
+    [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.9],  # 错误地非常确信最后一个类
+     [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],  # 预测分布均匀，无确信信息
+     [0.9, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]]  # 高度确信第一个类，且正确
+)
 
-W_softmax = np.array([[0.1, 0.1, 0.1],
-                      [0.2, 0.2, 0.2]])
+target = np.array(
 
-dL_dz_relu = np.dot(dL_dz_softmax, W_softmax.T)
+[[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 真实类别是第一类
+ [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],  # 真实类别是第八类
+ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]  # 真实类别是第一类
 
-print(dL_dz_relu)
+)
+
+# 计算损失
+loss = compute_cross_entropy_loss(prediction, target)
+print("Computed cross-entropy loss:", loss)

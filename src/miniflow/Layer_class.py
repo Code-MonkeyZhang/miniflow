@@ -20,9 +20,9 @@ class Layer:
         if self.activation == "relu":
             a_out = relu_function(z)
         if self.activation == 'softmax':
-            z_max = np.max(z)
+            z_max = np.max(z, axis=1, keepdims=True)
             exp_z = np.exp(z - z_max)  # 减去z中的最大值以避免溢出
-            a_out = exp_z / np.sum(exp_z)
+            a_out = exp_z / np.sum(exp_z, axis=1, keepdims=True)  # 按行计算softmax
         return a_out
 
     def train_layer(self, prev_layer_output, curr_layer_output, label, learningRate,
