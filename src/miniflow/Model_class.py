@@ -26,7 +26,7 @@ class Model:
             prev_layer_output = layer_output
         return prev_layer_output
 
-    def fit(self, X_train, y_train, learningRate, epochs):
+    def fit(self, X_train, y_train, learningRate, epochs, batch_size=32):
         # perform backward prop
         print("Start Training")
         for epoch in range(epochs):
@@ -34,29 +34,35 @@ class Model:
 
             epoch_lost = 0
             print("Epoch {}/{}  ".format(epoch + 1, epochs))
-            # In each epoch we iterate through each training example
-            for i in range(X_train.shape[0]):
+            # Divide X_train into pieces, each piece is the size of batch size
+            X_batch_list, y_batch_list = slice2batches(X_train, y_train, batch_size)
 
-                print_progress_bar(i, X_train.shape[0])
+            batch_num = len(X_batch_list)
 
-                # Make sure to clear the layers_output at the start of processing each sample
-                self.layers_output.clear()
+            # In each epoch, iterate through each batch
+            for i in range(batch_num):
 
-                train_example = X_train[i][
-                    np.newaxis, ...]  # extract one training example, and turn its shape into (1,28,28)
-                label = y_train[i]
+                print_progress_bar(i, batch_num)
 
-                # Manual convert it to one-hot
-                label_one_hot = np.zeros((1, 10))
-                label_one_hot[0, label] = 1
+                # Extract training example and label
+                train_example = X_batch_list[i]
+                label = y_batch_list[i]
 
-                # do forward prop to compute lost
+                # Convert label to one-hot
+                label_one_hot = np.zeros((label.shape[0], 10))
+                label_one_hot[np.arange(
+                    label.shape[0]), label] = 1  # use np advanced indexing to allocate the corresponding element to 1
+
+                # Perform forward prop to compute the lost
+                self.layers_output.clear()  # Clear the layers_output before Start
                 prediction = self.predict(train_example)
-                epoch_lost += self.compute_loss(prediction, label_one_hot)
+
+                error = compute_cross_entropy_loss(prediction, label_one_hot)
+                epoch_lost += error
 
                 ###### START TRAINING #####
 
-                # init backprop_gradient as all ones, when training from the output layer
+                # init backprop_gradient as all ones
                 backprop_gradient = np.ones(self.dense_array[-1].get_weights().shape)
 
                 # reverse iterate the layers
@@ -67,15 +73,8 @@ class Model:
                                                           backprop_gradient)
 
             tok = time.time()
-            print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost / X_train.shape[0], (1000 * (tok - tic))))
-    def compute_loss(self, prediction, target):
-        # 使用交叉熵损失计算损失
-        # 避免对数函数中的数值不稳定，可以添加一个很小的值epsilon到对数函数中
-        epsilon = 1e-12
-        prediction = np.clip(prediction, epsilon, 1. - epsilon)
-        # 计算交叉熵损失
-        loss = -np.sum(target * np.log(prediction)) / prediction.shape[0]
-        return loss
+            epoch_lost = epoch_lost / batch_num
+            print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, (1000 * (tok - tic))))
 
     def set_rand_weight(self):
         for layer in self.dense_array:
