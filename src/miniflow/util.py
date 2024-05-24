@@ -302,7 +302,7 @@ def print_progress_bar(index, count, bar_length=50):
 
 def slice2batches(X_train: np.ndarray, y_train: np.ndarray, batch_size: int):
     """
-    Given the entire training set & its label, cut it into pieces with the size of batch size
+    Given the entire training set & its label, cut them into pieces with the size of batch size
     Args:
         X_train (numpy): The training set
         y_train (numpy): The corresponding label set
@@ -324,7 +324,7 @@ def slice2batches(X_train: np.ndarray, y_train: np.ndarray, batch_size: int):
     return X_batch_list, y_batch_list
 
 
-def compute_lost(prediction, target):
+def compute_cross_entropy_loss(prediction, target):
     epsilon = 1e-12
     prediction = np.clip(prediction, epsilon, 1. - epsilon)
     lost_per_sample = -np.sum(target * np.log(prediction), axis=1)
