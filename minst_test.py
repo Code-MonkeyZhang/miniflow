@@ -8,7 +8,7 @@ from src.miniflow import Layer, FlattenLayer
 
 # Load data
 # 设置数据文件的路径
-data_dir = os.path.join(os.path.dirname(__file__), 'data')
+data_dir = os.path.join(os.path.dirname(__file__), 'data/mnist_data')
 x_train_path = os.path.join(data_dir, 'mnist_x_train.npy')
 y_train_path = os.path.join(data_dir, 'mnist_y_train.npy')
 x_test_path = os.path.join(data_dir, 'mnist_x_test.npy')
@@ -42,7 +42,7 @@ model2 = Model(
 
 ############################## Load the data ########################################
 
-sample_size = 80000
+sample_size = 60000
 x_samples = x_train[0:sample_size]
 y_samples = y_train[0:sample_size]
 
@@ -52,7 +52,7 @@ y_samples = y_train[0:sample_size]
 # predictions = model.predict(x_test)
 
 model2.set_rand_weight()
-model2.fit(x_samples, y_samples, learningRate=0.005, epochs=30)
+model2.fit(x_samples, y_samples, learningRate=0.002, epochs=50, batch_size=32)
 predictions = model2.predict(x_test)
 
 # # Display Prediction
