@@ -10,7 +10,6 @@ As part of my deep learning and AI learning journey, I hope to put the concepts 
 
 - Currently, the framework only supports training and prediction on the MNIST dataset; support for other datasets needs to be extended
 - Currently, only the basic fully connected layer and ReLU/Softmax activation functions are provided; more layer types and functionalities need to be added
-- As a learning project for deep learning and AI, new features such as regularization, feature scaling, etc., will be continuously added and improved to deepen the understanding and application of these concepts
 
 ## Usage Tutorial
 
