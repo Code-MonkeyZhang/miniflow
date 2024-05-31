@@ -29,7 +29,7 @@ class Layer:
                     backprop_gradient) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
-        # 这个计算要单独独立出来，目前先放在这里
+        # 这个计算以后要独立出来，目前先放在这里
         cost_func_gradient = np.subtract(curr_layer_output, label)
 
         # obtain gradients of weights and bias for updates

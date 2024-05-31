@@ -52,7 +52,7 @@ y_samples = y_train[0:sample_size]
 # predictions = model.predict(x_test)
 
 model2.set_rand_weight()
-model2.fit(x_samples, y_samples, learningRate=0.002, epochs=50, batch_size=32)
+model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=5, batch_size=32)
 predictions = model2.predict(x_test)
 
 # # Display Prediction
