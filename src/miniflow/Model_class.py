@@ -69,7 +69,11 @@ class Model:
                 for layer, prev_layer_output in reversed(self.layers_output):
                     if layer.activation == "Flatten":
                         break  # ignore Flatten layer
-                    backprop_gradient = layer.train_layer(prev_layer_output, prediction, label_one_hot, learningRate,
+                    backprop_gradient = layer.train_layer(prev_layer_output,
+                                                          prediction,
+                                                          label_one_hot,
+                                                          learning_rate,
+                                                          b1, b2, epsilon,
                                                           backprop_gradient)
 
             tok = time.time()
@@ -79,3 +83,10 @@ class Model:
     def set_rand_weight(self):
         for layer in self.dense_array:
             layer.set_random_weights()
+
+    def save(self, path=""):
+        for layer in self.dense_array:
+            if layer.layer_name == "Flatten":
+                continue
+            np.save(path + layer.layer_name + "_w"+".npy", layer.get_weights())
+            np.save(path + layer.layer_name + "_b"+".npy", layer.get_bias())
