@@ -93,5 +93,5 @@ class Model:
         for layer in self.dense_array:
             if layer.layer_name == "Flatten":
                 continue
-            np.save(path + layer.layer_name + "_w"+".npy", layer.get_weights())
-            np.save(path + layer.layer_name + "_b"+".npy", layer.get_bias())
+            np.save(path + layer.layer_name + "_w" + ".npy", layer.get_weights())
+            np.save(path + layer.layer_name + "_b" + ".npy", layer.get_bias())
