@@ -16,6 +16,7 @@ class Model:
         self.layers_output = []
         self.name = name
         self.cost = cost
+        self.iter_num = 0
 
     # Iterate through each layer, and puts its output to the next layer
     def predict(self, x: np.ndarray) -> np.ndarray:
@@ -26,14 +27,16 @@ class Model:
             prev_layer_output = layer_output
         return prev_layer_output
 
-    def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32, b1=0.9, b2=0.999, epsilon=1e-8):
+    def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32, b1=0.2, b2=0.999, epsilon=1e-8,
+            time_interval=1000, decay_rate=0.0000):
         # perform backward prop
         epoch_lost_list = []
 
         print("Start Training")
         for epoch in range(epochs):
             tic = time.time()
-
+            # Learning Rate Decay
+            learning_rate = learning_rate / (1 + decay_rate * (epoch))
             epoch_lost = 0
             print("Epoch {}/{}  ".format(epoch + 1, epochs))
             # Divide X_train into pieces, each piece is the size of batch size
@@ -68,6 +71,7 @@ class Model:
                 backprop_gradient = np.ones(self.dense_array[-1].get_weights().shape)
 
                 # reverse iterate the layers
+                self.iter_num += 1
                 for layer, prev_layer_output in reversed(self.layers_output):
                     if layer.activation == "Flatten":
                         break  # ignore Flatten layer
@@ -76,7 +80,8 @@ class Model:
                                                           label_one_hot,
                                                           learning_rate,
                                                           b1, b2, epsilon,
-                                                          backprop_gradient)
+                                                          backprop_gradient,
+                                                          self.iter_num)
 
             tok = time.time()
             epoch_lost = epoch_lost / batch_num

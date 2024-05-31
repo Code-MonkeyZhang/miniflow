@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from matplotlib import pyplot as plt
 
 from src.miniflow import Model
 from src.miniflow import Layer, FlattenLayer
@@ -55,7 +56,8 @@ model2.dense_array[1].set_weights(np.load("weights/RandomWeights/L1_w.npy"), np.
 model2.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.load("weights/RandomWeights/L2_b.npy"))
 model2.dense_array[3].set_weights(np.load("weights/RandomWeights/L3_w.npy"), np.load("weights/RandomWeights/L3_b.npy"))
 
-model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=5, batch_size=32, b1=0.9)
+model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=10, batch_size=32, b1=0.9)
+print(model2.iter_num)
 predictions = model2.predict(x_test)
 
 # # Display Prediction

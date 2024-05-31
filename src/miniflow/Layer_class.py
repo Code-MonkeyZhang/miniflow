@@ -16,7 +16,7 @@ class Layer:
         self.Biases_Velocity = np.zeros(self.Biases.shape)
 
         self.Squared_Weights = np.zeros(self.Weights.shape)
-        self.Squared_Biases = np.zeros(self.Weights.shape)
+        self.Squared_Biases = np.zeros(self.Biases.shape)
 
     def compute_layer(self, a_in: np.ndarray) -> np.ndarray:
         z = np.dot(a_in, self.Weights.T) + self.Biases
@@ -33,7 +33,7 @@ class Layer:
         return a_out
 
     def train_layer(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
-                    backprop_gradient) -> np.ndarray:
+                    backprop_gradient, iter_num) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
         # 这个计算以后要独立出来，目前先放在这里
@@ -50,9 +50,20 @@ class Layer:
         self.Weights_Velocity = b1 * self.Weights_Velocity + (1 - b1) * dl_dw
         self.Biases_Velocity = b1 * self.Biases_Velocity + (1 - b1) * dj_db
 
+        # Bias Correction for Momentum
+        vdw_corrected = self.Weights_Velocity / (1 - b1 ** iter_num)
+        vdb_corrected = self.Biases_Velocity / (1 - b1 ** iter_num)
+
+        # RMS prop
+        self.Squared_Weights = b2 * self.Squared_Weights + (1 - b2) * np.square(vdw_corrected)
+        self.Squared_Biases = b2 * self.Squared_Biases + (1 - b2) * np.square(vdb_corrected)
+
+        sdw_corrected = self.Squared_Weights / (1 - b2 ** iter_num)
+        sdb_corrected = self.Squared_Biases / (1 - b2 ** iter_num)
+
         # perform gradient descent, update gradient
-        self.Weights -= alpha * self.Weights_Velocity
-        self.Biases -= alpha * self.Biases_Velocity
+        self.Weights -= alpha * vdw_corrected / np.sqrt(sdw_corrected + epsilon)
+        self.Biases -= alpha * vdb_corrected / np.sqrt(sdb_corrected + epsilon)
 
         return backprop_gradient
 
