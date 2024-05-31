@@ -28,6 +28,8 @@ class Model:
 
     def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32, b1=0.9, b2=0.999, epsilon=1e-8):
         # perform backward prop
+        epoch_lost_list = []
+
         print("Start Training")
         for epoch in range(epochs):
             tic = time.time()
@@ -78,7 +80,10 @@ class Model:
 
             tok = time.time()
             epoch_lost = epoch_lost / batch_num
+            epoch_lost_list.append(epoch_lost)
             print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, (1000 * (tok - tic))))
+
+        plot_loss(epoch_lost_list)
 
     def set_rand_weight(self):
         for layer in self.dense_array:
