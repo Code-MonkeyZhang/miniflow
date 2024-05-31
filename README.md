@@ -53,7 +53,7 @@ model = Model(
 5. Train the model:
 ```python
 model.set_rand_weight()  # Randomly initialize weights
-model.fit(x_train, y_train, learningRate=0.001, epochs=50, batch_size=32)
+model.fit(x_train, y_train, learning_rate=0.001, epochs=50, batch_size=32)
 ```
 
 6. Evaluate the model performance on the test set:
