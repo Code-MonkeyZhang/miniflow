@@ -26,7 +26,7 @@ class Model:
             prev_layer_output = layer_output
         return prev_layer_output
 
-    def fit(self, X_train, y_train, learningRate, epochs, batch_size=32):
+    def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32, b1=0.9, b2=0.999, epsilon=1e-8):
         # perform backward prop
         print("Start Training")
         for epoch in range(epochs):

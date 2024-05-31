@@ -7,9 +7,16 @@ class Layer:
         self.units = units
         self.activation = activation
         self.layer_name = layer_name
+        self.input_shape = input_shape
+
         self.Weights = np.zeros((units, input_shape))
         self.Biases = np.zeros(units)
-        self.input_shape = input_shape
+
+        self.Weights_Velocity = np.zeros(self.Weights.shape)
+        self.Biases_Velocity = np.zeros(self.Biases.shape)
+
+        self.Squared_Weights = np.zeros(self.Weights.shape)
+        self.Squared_Biases = np.zeros(self.Weights.shape)
 
     def compute_layer(self, a_in: np.ndarray) -> np.ndarray:
         z = np.dot(a_in, self.Weights.T) + self.Biases
@@ -25,7 +32,7 @@ class Layer:
             a_out = exp_z / np.sum(exp_z, axis=1, keepdims=True)  # 按行计算softmax
         return a_out
 
-    def train_layer(self, prev_layer_output, curr_layer_output, label, learningRate,
+    def train_layer(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
                     backprop_gradient) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
@@ -33,15 +40,19 @@ class Layer:
         cost_func_gradient = np.subtract(curr_layer_output, label)
 
         # obtain gradients of weights and bias for updates
-        dL_dw, dj_db, dL_dz = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
+        dl_dw, dj_db, dl_dz = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
 
         # 根据 chain rule, 传给上一层的gradient应该是:
         # dl/da = dl/ds * ds/da
-        backprop_gradient = np.dot(dL_dz, self.Weights)
+        backprop_gradient = np.dot(dl_dz, self.Weights)
+
+        # GDM
+        self.Weights_Velocity = b1 * self.Weights_Velocity + (1 - b1) * dl_dw
+        self.Biases_Velocity = b1 * self.Biases_Velocity + (1 - b1) * dj_db
 
         # perform gradient descent, update gradient
-        self.Weights -= learningRate * dL_dw
-        self.Biases -= learningRate * dj_db
+        self.Weights -= alpha * self.Weights_Velocity
+        self.Biases -= alpha * self.Biases_Velocity
 
         return backprop_gradient
 
@@ -80,6 +91,9 @@ class Layer:
 
     def get_weights(self) -> np.ndarray:
         return self.Weights
+
+    def get_bias(self) -> np.ndarray:
+        return self.Biases
 
     def set_random_weights(self):
         self.Weights = np.random.randn(*self.Weights.shape)

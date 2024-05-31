@@ -47,12 +47,15 @@ x_samples = x_train[0:sample_size]
 y_samples = y_train[0:sample_size]
 
 ############################## Train the model ########################################
-# model.set_rand_weight()
-# model.fit(x_samples, y_samples, learningRate=0.05, epochs=5)
-# predictions = model.predict(x_test)
 
-model2.set_rand_weight()
-model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=5, batch_size=32)
+# model2.set_rand_weight()
+# model2.save("weights/RandomWeights/")
+
+model2.dense_array[1].set_weights(np.load("weights/RandomWeights/L1_w.npy"), np.load("weights/RandomWeights/L1_b.npy"))
+model2.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.load("weights/RandomWeights/L2_b.npy"))
+model2.dense_array[3].set_weights(np.load("weights/RandomWeights/L3_w.npy"), np.load("weights/RandomWeights/L3_b.npy"))
+
+model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=5, batch_size=32, b1=0.9)
 predictions = model2.predict(x_test)
 
 # # Display Prediction
