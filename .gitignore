@@ -2,7 +2,7 @@
 *.xml
 *.iml
 test.py
-idea/
+.idea/
 vscode/
 venv/
 # Default ignored files
