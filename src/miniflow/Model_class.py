@@ -100,3 +100,42 @@ class Model:
                 continue
             np.save(path + layer.layer_name + "_w" + ".npy", layer.get_weights())
             np.save(path + layer.layer_name + "_b" + ".npy", layer.get_bias())
+
+    def summary(self):
+        """
+        Print a summary of the model's layers, including name, type, weight shape, output shape, number of parameters, and activation.
+        """
+        total_params = 0
+        print("Model Summary")
+        print("=" * 120)
+        print("{:30} {:20} {:20} {:20} {:10}".format("Layer (type)", "Weight Shape", "Output Shape", "Param #", "Activation"))
+        print("=" * 120)
+        
+        for layer in self.dense_array:
+            # Get weight shape
+            weight_shape = layer.Weights.shape if hasattr(layer, 'Weights') else 'No weights'
+            
+            # Assuming each layer has a `output_shape()` method that calculates its output shape
+            output_shape = layer.output_shape() if hasattr(layer, 'output_shape') else 'Unknown'
+            
+            # Calculating parameters; this assumes layer has `count_params()` method
+            params = layer.count_params() if hasattr(layer, 'count_params') else 0
+            total_params += params
+            
+            # Prepare the layer activation, type, and name info
+            layer_info = type(layer).__name__
+            layer_name = layer.layer_name if hasattr(layer, 'layer_name') else 'Unnamed Layer'
+            activation = getattr(layer, 'activation', 'None')
+            
+            # Print layer details
+            print("{:30} {:20} {:20} {:20} {:10}".format(
+                layer_name + ' (' + layer_info + ')', 
+                str(weight_shape),
+                str(output_shape), 
+                str(params), 
+                activation
+            ))
+
+        print("=" * 120)
+        print("Total params:", total_params)
+        print("=" * 120)
