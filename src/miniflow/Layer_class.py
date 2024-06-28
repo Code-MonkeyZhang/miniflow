@@ -109,6 +109,16 @@ class Dense:
     def set_random_weights(self):
         self.Weights = np.random.randn(*self.Weights.shape)
         self.Biases = np.random.randn(*self.Biases.shape)
+    
+    def count_params(self):
+        # 计算权重参数的数量
+        weight_params = np.prod(self.Weights.shape)
+
+        # 计算偏置参数的数量
+        bias_params = np.prod(self.Biases.shape)
+
+        # 返回总参数数量
+        return weight_params + bias_params
 
 
 class FlattenLayer(Dense):
@@ -132,3 +142,9 @@ class FlattenLayer(Dense):
 
     def set_random_weights(self):
         pass
+    
+    def count_params(self):
+        return 0
+
+    def output_shape(self):
+        return (None, np.prod(self.input_shape))

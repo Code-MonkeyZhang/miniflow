@@ -49,8 +49,7 @@ y_samples = y_train[0:sample_size]
 
 ############################## Train the model ########################################
 
-# model2.set_rand_weight()
-# model2.save("weights/RandomWeights/")
+model2.summary()
 
 model2.dense_array[1].set_weights(np.load("weights/RandomWeights/L1_w.npy"), np.load("weights/RandomWeights/L1_b.npy"))
 model2.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.load("weights/RandomWeights/L2_b.npy"))
