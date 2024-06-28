@@ -98,7 +98,7 @@ def plot_loss(epoch_lost_list):
     plt.plot(epoch_lost_list)
 
     # 在数据点上绘制点
-    plt.scatter(range(len(epoch_lost_list)), epoch_lost_list, color='red', marker='o',s=10)
+    plt.scatter(range(len(epoch_lost_list)), epoch_lost_list, color='red', marker='o', s=10)
 
     # 添加标题和标签
     plt.title('Data Plot with Points')
@@ -107,6 +107,33 @@ def plot_loss(epoch_lost_list):
 
     # 显示图形
     plt.show()
+
+
+def train_summary(loss, time):
+    """
+    Generates a concise summary of the training process.
+
+    Args:
+    loss (list): List of loss values for each epoch.
+    time (list): List of training times for each epoch (in seconds).
+
+    Returns:
+    None: Prints the summary to the console.
+    """
+    total_time = sum(time)
+    avg_epoch_time = sum(time) / len(time) if time else 0
+    final_loss = loss[-1] if loss else None
+    min_loss = min(loss) if loss else None
+    epochs = len(loss)
+
+    print("TRAINING SUMMARY")
+    print("=" * 40)
+    print(f"Epochs: {epochs}")
+    print(f"Total Time: {total_time:.0f} ms")
+    print(f"Avg Time/Epoch: {avg_epoch_time:.1f} ms")
+    print(f"Final Loss: {final_loss:.4f}" if final_loss is not None else "Final Loss: N/A")
+    print(f"Best Loss: {min_loss:.4f}" if min_loss is not None else "Best Loss: N/A")
+    print("=" * 40)
 
 
 def compute_linear_gradient(x_train, y_train, w, b, lambda_=0):

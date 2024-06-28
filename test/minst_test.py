@@ -42,13 +42,23 @@ y_samples = y_train[0:sample_size]
 
 ############################## Train the model ########################################
 
-model.summary()
-
 model.dense_array[1].set_weights(np.load("weights/RandomWeights/L1_w.npy"), np.load("weights/RandomWeights/L1_b.npy"))
 model.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.load("weights/RandomWeights/L2_b.npy"))
 model.dense_array[3].set_weights(np.load("weights/RandomWeights/L3_w.npy"), np.load("weights/RandomWeights/L3_b.npy"))
 
-model.fit(x_samples, y_samples, learning_rate=0.002, epochs=10, batch_size=32, b1=0.9)
+model.compile(optimizer='adam',
+              alpha_decay=True,
+              show_summary=False,
+              plot_loss=False,
+              )
+
+model.fit(x_samples,
+          y_samples,
+          learning_rate=0.002,
+          epochs=10,
+          batch_size=32,
+          b1=0.9)
+
 predictions = model.predict(x_test)
 
 # 假设 predictions 是你的模型预测输出，现在你需要将其转换为类别标签
