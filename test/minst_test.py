@@ -29,13 +29,6 @@ x_train, x_test = x_train / 255.0, x_test / 255.0  # 归一化
 model = Model(
     [
         FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
-        Dense(64, activation="relu", layer_name="L1", input_shape=784),
-        Dense(10, activation='softmax', layer_name="L2", input_shape=64),
-    ], name="my_model", cost="softmax")
-
-model2 = Model(
-    [
-        FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
         Dense(128, activation="relu", layer_name="L1", input_shape=784),
         Dense(64, activation="relu", layer_name="L2", input_shape=128),
         Dense(10, activation='softmax', layer_name="L3", input_shape=64),
@@ -49,14 +42,14 @@ y_samples = y_train[0:sample_size]
 
 ############################## Train the model ########################################
 
-model2.summary()
+model.summary()
 
-model2.dense_array[1].set_weights(np.load("weights/RandomWeights/L1_w.npy"), np.load("weights/RandomWeights/L1_b.npy"))
-model2.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.load("weights/RandomWeights/L2_b.npy"))
-model2.dense_array[3].set_weights(np.load("weights/RandomWeights/L3_w.npy"), np.load("weights/RandomWeights/L3_b.npy"))
+model.dense_array[1].set_weights(np.load("weights/RandomWeights/L1_w.npy"), np.load("weights/RandomWeights/L1_b.npy"))
+model.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.load("weights/RandomWeights/L2_b.npy"))
+model.dense_array[3].set_weights(np.load("weights/RandomWeights/L3_w.npy"), np.load("weights/RandomWeights/L3_b.npy"))
 
-model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=10, batch_size=32, b1=0.9)
-predictions = model2.predict(x_test)
+model.fit(x_samples, y_samples, learning_rate=0.002, epochs=10, batch_size=32, b1=0.9)
+predictions = model.predict(x_test)
 
 # 假设 predictions 是你的模型预测输出，现在你需要将其转换为类别标签
 predictions = np.argmax(predictions, axis=1)  # 获取最大概率的索引作为预测标签
