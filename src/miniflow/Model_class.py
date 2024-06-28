@@ -27,17 +27,25 @@ class Model:
             prev_layer_output = layer_output
         return prev_layer_output
 
-    def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32, b1=0.2, b2=0.999, epsilon=1e-8,
-            time_interval=1000, decay_rate=0.0000):
-        # perform backward prop
+    def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32,
+            b1=0.2,
+            b2=0.999,
+            epsilon=1e-8,
+            time_interval=1000,
+            decay_rate=0.0000):
+
         epoch_lost_list = []
+        epoch_time_list = []
 
         print("Start Training")
         for epoch in range(epochs):
+
             tic = time.time()
+
             # Learning Rate Decay
             learning_rate = learning_rate / (1 + decay_rate * (epoch))
             epoch_lost = 0
+
             print("Epoch {}/{}  ".format(epoch + 1, epochs))
             # Divide X_train into pieces, each piece is the size of batch size
             X_batch_list, y_batch_list = slice2batches(X_train, y_train, batch_size)
@@ -70,8 +78,8 @@ class Model:
                 # init backprop_gradient as all ones
                 backprop_gradient = np.ones(self.dense_array[-1].get_weights().shape)
 
-                # reverse iterate the layers
                 self.iter_num += 1
+                # reverse iterate layers Start backprop
                 for layer, prev_layer_output in reversed(self.layers_output):
                     if layer.activation == "Flatten":
                         break  # ignore Flatten layer
@@ -84,9 +92,13 @@ class Model:
                                                           self.iter_num)
 
             tok = time.time()
+            epoch_time = 1000 * (tok - tic)
+            epoch_time_list.append(epoch_time)
+
             epoch_lost = epoch_lost / batch_num
             epoch_lost_list.append(epoch_lost)
-            print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, (1000 * (tok - tic))))
+
+            print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, epoch_time))
 
         plot_loss(epoch_lost_list)
 
@@ -108,31 +120,32 @@ class Model:
         total_params = 0
         print("Model Summary")
         print("=" * 120)
-        print("{:30} {:20} {:20} {:20} {:10}".format("Layer (type)", "Weight Shape", "Output Shape", "Param #", "Activation"))
+        print("{:30} {:20} {:20} {:20} {:10}".format("Layer (type)", "Weight Shape", "Output Shape", "Param #",
+                                                     "Activation"))
         print("=" * 120)
-        
+
         for layer in self.dense_array:
             # Get weight shape
             weight_shape = layer.Weights.shape if hasattr(layer, 'Weights') else 'No weights'
-            
+
             # Assuming each layer has a `output_shape()` method that calculates its output shape
             output_shape = layer.output_shape() if hasattr(layer, 'output_shape') else 'Unknown'
-            
+
             # Calculating parameters; this assumes layer has `count_params()` method
             params = layer.count_params() if hasattr(layer, 'count_params') else 0
             total_params += params
-            
+
             # Prepare the layer activation, type, and name info
             layer_info = type(layer).__name__
             layer_name = layer.layer_name if hasattr(layer, 'layer_name') else 'Unnamed Layer'
             activation = getattr(layer, 'activation', 'None')
-            
+
             # Print layer details
             print("{:30} {:20} {:20} {:20} {:10}".format(
-                layer_name + ' (' + layer_info + ')', 
+                layer_name + ' (' + layer_info + ')',
                 str(weight_shape),
-                str(output_shape), 
-                str(params), 
+                str(output_shape),
+                str(params),
                 activation
             ))
 
