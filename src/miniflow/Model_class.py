@@ -18,6 +18,11 @@ class Model:
         self.cost = cost
         self.iter_num = 0
 
+        self.optimizer = None
+        self.show_summary = None
+        self.plot_loss = None
+        self.alpha_decay = None
+
     # Iterate through each layer, and puts its output to the next layer
     def predict(self, x: np.ndarray) -> np.ndarray:
         prev_layer_output = x
@@ -27,12 +32,18 @@ class Model:
             prev_layer_output = layer_output
         return prev_layer_output
 
+    def compile(self, optimizer=None, alpha_decay=True, show_summary=False, plot_loss=False):
+        self.optimizer = optimizer
+        self.show_summary = show_summary
+        self.plot_loss = plot_loss
+        self.alpha_decay = alpha_decay
+
     def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32,
             b1=0.2,
             b2=0.999,
             epsilon=1e-8,
             time_interval=1000,
-            decay_rate=0.0000):
+            decay_rate=0.0002):
 
         epoch_lost_list = []
         epoch_time_list = []
@@ -41,10 +52,11 @@ class Model:
         for epoch in range(epochs):
 
             tic = time.time()
-
-            # Learning Rate Decay
-            learning_rate = learning_rate / (1 + decay_rate * (epoch))
             epoch_lost = 0
+
+            if self.alpha_decay:
+                # Learning Rate Decay
+                learning_rate = learning_rate / (1 + decay_rate * (epoch))
 
             print("Epoch {}/{}  ".format(epoch + 1, epochs))
             # Divide X_train into pieces, each piece is the size of batch size
@@ -100,7 +112,10 @@ class Model:
 
             print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, epoch_time))
 
-        plot_loss(epoch_lost_list)
+        if self.show_summary:
+            train_summary(loss=epoch_lost_list, time=epoch_time_list)
+        if self.plot_loss:
+            plot_loss(epoch_lost_list)
 
     def set_rand_weight(self):
         for layer in self.dense_array:
