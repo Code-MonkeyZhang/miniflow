@@ -2,7 +2,7 @@ from .activation import *
 import numpy as np
 
 
-class Layer:
+class Dense:
     def __init__(self, units: int, activation: str, layer_name='layer', input_shape: int = 0):
         self.units = units
         self.activation = activation
@@ -111,7 +111,7 @@ class Layer:
         self.Biases = np.random.randn(*self.Biases.shape)
 
 
-class FlattenLayer(Layer):
+class FlattenLayer(Dense):
     def __init__(self, input_shape, layer_name='Flatten'):
         # Flatten layer doesn't need units & activation
         super().__init__(units=0, layer_name=layer_name, activation="Flatten")

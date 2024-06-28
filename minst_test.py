@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from src.miniflow import Model
-from src.miniflow import Layer, FlattenLayer
+from src.miniflow import Dense, FlattenLayer
 
 # from miniflow import Layer, FlattenLayer
 
@@ -29,16 +29,16 @@ x_train, x_test = x_train / 255.0, x_test / 255.0  # 归一化
 model = Model(
     [
         FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
-        Layer(64, activation="relu", layer_name="L1", input_shape=784),
-        Layer(10, activation='softmax', layer_name="L2", input_shape=64),
+        Dense(64, activation="relu", layer_name="L1", input_shape=784),
+        Dense(10, activation='softmax', layer_name="L2", input_shape=64),
     ], name="my_model", cost="softmax")
 
 model2 = Model(
     [
         FlattenLayer(input_shape=(28, 28), layer_name='Flatten'),
-        Layer(128, activation="relu", layer_name="L1", input_shape=784),
-        Layer(64, activation="relu", layer_name="L2", input_shape=128),
-        Layer(10, activation='softmax', layer_name="L3", input_shape=64),
+        Dense(128, activation="relu", layer_name="L1", input_shape=784),
+        Dense(64, activation="relu", layer_name="L2", input_shape=128),
+        Dense(10, activation='softmax', layer_name="L3", input_shape=64),
     ], name="my_model", cost="softmax")
 
 ############################## Load the data ########################################

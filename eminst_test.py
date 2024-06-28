@@ -21,14 +21,14 @@ x_train, y_train = load_data(train_file)
 x_test, y_test = load_data(test_file)
 
 # 接下来，我们可以使用这些加载的数据来配置和训练你的 MiniFlow 模型
-from src.miniflow import Model, Layer, FlattenLayer
+from src.miniflow import Model, Dense, FlattenLayer
 
 model = Model(
     [
         FlattenLayer(input_shape=(28, 28, 1), layer_name='Flatten'),
-        Layer(128, activation="relu", layer_name="L1"),
-        Layer(64, activation="relu", layer_name="L2"),
-        Layer(47, activation='softmax', layer_name="L3"),  # 注意：这里的输出层单元数应与标签数量一致
+        Dense(128, activation="relu", layer_name="L1"),
+        Dense(64, activation="relu", layer_name="L2"),
+        Dense(47, activation='softmax', layer_name="L3"),  # 注意：这里的输出层单元数应与标签数量一致
     ], name="emnist_model", cost="softmax")
 
 model.set_rand_weight()

@@ -11,7 +11,7 @@ Model Class
 
 
 class Model:
-    def __init__(self, dense_array: List[Layer], cost, name='model') -> None:
+    def __init__(self, dense_array: List[Dense], cost, name='model') -> None:
         self.dense_array = dense_array
         self.layers_output = []
         self.name = name
