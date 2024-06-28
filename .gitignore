@@ -11,3 +11,6 @@ venv/
 TF_CNN_example.py
 test.py
 TensorFlow example.py
+
+# data
+data/
