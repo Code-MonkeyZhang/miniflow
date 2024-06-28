@@ -3,8 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import sys
 sys.path.insert(0, '/home/yufeng/Workspace/miniflow')
-from src.miniflow import Model
-from src.miniflow import Dense, FlattenLayer
+from miniflow import Model, Dense, FlattenLayer
 
 
 ############################## Create Model ########################################

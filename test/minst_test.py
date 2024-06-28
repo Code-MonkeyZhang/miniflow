@@ -1,15 +1,15 @@
 import os
 import numpy as np
 from matplotlib import pyplot as plt
-
-from src.miniflow import Model
-from src.miniflow import Dense, FlattenLayer
-
-# from miniflow import Layer, FlattenLayer
-
+from miniflow import Model, Dense, FlattenLayer
 # Load data
+
+# 获取当前脚本的目录
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# 获取项目根目录（假设test文件夹在项目根目录下）
+project_root = os.path.dirname(current_dir)
 # 设置数据文件的路径
-data_dir = os.path.join(os.path.dirname(__file__), 'data/mnist_data')
+data_dir = os.path.join(project_root, 'data', 'mnist_data')
 x_train_path = os.path.join(data_dir, 'mnist_x_train.npy')
 y_train_path = os.path.join(data_dir, 'mnist_y_train.npy')
 x_test_path = os.path.join(data_dir, 'mnist_x_test.npy')
@@ -56,30 +56,7 @@ model2.dense_array[2].set_weights(np.load("weights/RandomWeights/L2_w.npy"), np.
 model2.dense_array[3].set_weights(np.load("weights/RandomWeights/L3_w.npy"), np.load("weights/RandomWeights/L3_b.npy"))
 
 model2.fit(x_samples, y_samples, learning_rate=0.002, epochs=10, batch_size=32, b1=0.9)
-print(model2.iter_num)
 predictions = model2.predict(x_test)
-
-# # Display Prediction
-# # 选择要可视化的样本数量
-# num_samples = 30
-# fig, axes = plt.subplots(1, num_samples, figsize=(20, 2))
-#
-# for i, ax in enumerate(axes):
-#     # 选择一个随机索引
-#     idx = np.random.choice(x_test.shape[0])
-#     # 绘制图像
-#     ax.imshow(x_test[idx], cmap='gray')
-#     ax.axis('off')
-#
-#     # 获取真实标签和预测标签
-#     true_label = y_test[idx]
-#     predicted_label = np.argmax(predictions[idx])
-#
-#     # 设置标题显示真实标签和预测标签
-#     ax.set_title(f"True: {true_label}\nPred: {predicted_label}")
-#
-# plt.tight_layout()
-# plt.show()
 
 # 假设 predictions 是你的模型预测输出，现在你需要将其转换为类别标签
 predictions = np.argmax(predictions, axis=1)  # 获取最大概率的索引作为预测标签
