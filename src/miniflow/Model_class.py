@@ -74,18 +74,17 @@ class Model:
                 label = y_batch_list[i]
 
                 # Convert label to one-hot
-                label_one_hot = np.zeros((label.shape[0], 10))
-                label_one_hot[np.arange(
-                    label.shape[0]), label] = 1  # use np advanced indexing to allocate the corresponding element to 1
+                label_one_hot = label2onehot(label, units=self.dense_array[-1].units)
 
-                # Perform forward prop to compute the lost
+                ############################## Forward PROP ########################################
+
                 self.layers_output.clear()  # Clear the layers_output before Start
                 prediction = self.predict(train_example)
 
                 error = compute_cross_entropy_loss(prediction, label_one_hot)
                 epoch_lost += error
 
-                ###### START TRAINING #####
+                ############################## START TRAINING ########################################
 
                 # init backprop_gradient as all ones
                 backprop_gradient = np.ones(self.dense_array[-1].get_weights().shape)

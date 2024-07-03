@@ -354,3 +354,9 @@ def compute_cross_entropy_loss(prediction, target):
     lost_per_sample = -np.sum(target * np.log(prediction), axis=1)
     lost = np.mean(lost_per_sample)
     return lost
+
+
+def label2onehot(label, units):
+    label_one_hot = np.zeros((label.shape[0], units))
+    label_one_hot[np.arange(label.shape[0]), label] = 1
+    return label_one_hot

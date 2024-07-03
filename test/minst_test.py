@@ -2,7 +2,6 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 from miniflow import Model, Dense, FlattenLayer
-# Load data
 
 # Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -54,7 +53,8 @@ model.compile(optimizer='adam',
               plot_loss=False,
               )
 
-# Train the model
+model.summary()
+
 model.fit(x_samples,
           y_samples,
           learning_rate=0.002,
