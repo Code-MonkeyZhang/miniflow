@@ -109,7 +109,16 @@ class Dense:
     def set_random_weights(self):
         self.Weights = np.random.randn(*self.Weights.shape)
         self.Biases = np.random.randn(*self.Biases.shape)
-    
+        
+    def set_he_weights(self):
+        # He初始化权重
+        n = self.Weights.shape[1]  # 输入神经元数量
+        scale = np.sqrt(2. / n)
+        self.Weights = np.random.randn(*self.Weights.shape) * scale
+        
+        # 偏置通常初始化为0或很小的常数
+        self.Biases = np.zeros(self.Biases.shape)
+
     def count_params(self):
         # 计算权重参数的数量
         weight_params = np.prod(self.Weights.shape)
