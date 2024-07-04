@@ -31,7 +31,7 @@ Run Tests
 cd test
 python minst_test.py
 ```
-# Support List
+## Support List
 | Dateset          | Best Test Accuracy |
 |---------------|-----------|
 | MNIST         | 95.56%    |
