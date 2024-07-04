@@ -116,9 +116,17 @@ class Model:
         if self.plot_loss:
             plot_loss(epoch_lost_list)
 
-    def set_rand_weight(self):
+    def set_rand_weight(self,method='He'):
         for layer in self.dense_array:
-            layer.set_random_weights()
+            if layer.layer_name == "Flatten":
+                continue
+            if method == 'He':
+                layer.set_he_weights()
+            elif method == 'Xavier':
+                # layer.set_xavier_weights()
+                pass
+            elif method == 'Random':
+                layer.set_random_weights()
 
     def save(self, path=""):
         for layer in self.dense_array:
