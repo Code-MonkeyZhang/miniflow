@@ -31,8 +31,13 @@ Run Tests
 cd test
 python minst_test.py
 ```
+# Support List
+| Dateset          | Best Test Accuracy |
+|---------------|-----------|
+| MNIST         | 95.56%    |
+| Extended MNIST | 82.82%  |
+
+To be continued..
 
 ## Limitations
-
-- Currently, the framework has only tested on the MNIST dataset; support for other datasets needs to be extended
 - Currently, only the basic fully connected layer and ReLU/Softmax activation functions are provided; more layer types and functionalities need to be added
