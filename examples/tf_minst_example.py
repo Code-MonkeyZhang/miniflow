@@ -6,14 +6,18 @@ import numpy as np
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
 
 # 数据预处理
-x_train = x_train.reshape((60000, 28 * 28)) / 255.0
-x_test = x_test.reshape((10000, 28 * 28)) / 255.0
+x_train = x_train.reshape((60000, 28, 28, 1)) / 255.0
+x_test = x_test.reshape((10000, 28, 28, 1)) / 255.0
 y_train = keras.utils.to_categorical(y_train)
 y_test = keras.utils.to_categorical(y_test)
 
-# 构建模型
+# 构建CNN模型
 model = keras.Sequential([
-    keras.layers.Dense(128, activation='relu', input_shape=(28 * 28,)),
+    keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    keras.layers.MaxPooling2D((2, 2)),
+    keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    keras.layers.MaxPooling2D((2, 2)),
+    keras.layers.Flatten(),
     keras.layers.Dense(64, activation='relu'),
     keras.layers.Dense(10, activation='softmax')
 ])
@@ -38,5 +42,6 @@ print('Test accuracy:', test_acc)
 
 # # 使用NumPy分别保存每一层的权重和偏置到不同的.npy文件
 # for i, weights in enumerate(layer_weights):
-#     np.save(f'./layer_{i}_weights.npy', weights[0])  # 权重
-#     np.save(f'./layer_{i}_biases.npy', weights[1])   # 偏置
+#     if weights:  # 仅保存包含权重的层
+#         np.save(f'./layer_{i}_weights.npy', weights[0])  # 权重
+#         np.save(f'./layer_{i}_biases.npy', weights[1])   # 偏置
