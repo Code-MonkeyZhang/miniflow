@@ -2,7 +2,30 @@ from .activation import *
 import numpy as np
 
 
-class Dense:
+class Layer:
+    def __init__(self, layer_name='layer'):
+        self.layer_name = layer_name
+
+    def compute_layer(self, *args, **kwargs):
+        pass
+    def forward_prop(self, *args, **kwargs):
+        pass
+    def compute_gradient(self, *args, **kwargs):
+        pass
+    def compute_cost_gradient(self, *args, **kwargs):
+        pass
+    def set_weights(self, *args, **kwargs):
+        pass
+    def get_weights(self, *args, **kwargs):
+
+        pass
+    def get_bias(self, *args, **kwargs):
+        pass
+    def set_random_weights(self, *args, **kwargs):
+        pass
+
+
+class Dense(Layer):
     def __init__(self, units: int, activation: str, layer_name='layer', input_shape: int = 0):
         self.units = units
         self.activation = activation
@@ -32,7 +55,7 @@ class Dense:
             a_out = exp_z / np.sum(exp_z, axis=1, keepdims=True)  # 按行计算softmax
         return a_out
 
-    def train_layer(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
+    def forward_prop(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
                     backprop_gradient, iter_num) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
@@ -109,13 +132,13 @@ class Dense:
     def set_random_weights(self):
         self.Weights = np.random.randn(*self.Weights.shape)
         self.Biases = np.random.randn(*self.Biases.shape)
-        
+
     def set_he_weights(self):
         # He初始化权重
         n = self.Weights.shape[1]  # 输入神经元数量
         scale = np.sqrt(2. / n)
         self.Weights = np.random.randn(*self.Weights.shape) * scale
-        
+
         # 偏置通常初始化为0或很小的常数
         self.Biases = np.zeros(self.Biases.shape)
 
@@ -128,6 +151,7 @@ class Dense:
 
         # 返回总参数数量
         return weight_params + bias_params
+
 
 # class Conv2D:
 
@@ -154,7 +178,7 @@ class FlattenLayer(Dense):
 
     def set_random_weights(self):
         pass
-    
+
     def count_params(self):
         return 0
 
