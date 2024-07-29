@@ -3,16 +3,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 from miniflow import Model, Dense, FlattenLayer
 
-# Get the directory of the current script
-current_dir = os.path.dirname(os.path.abspath(__file__))
-# Get the project root directory (assuming the test folder is under the project root)
-project_root = os.path.dirname(current_dir)
-# Set the path to the data files
-data_dir = os.path.join(project_root, 'data', 'mnist_data')
-x_train_path = os.path.join(data_dir, 'mnist_x_train.npy')
-y_train_path = os.path.join(data_dir, 'mnist_y_train.npy')
-x_test_path = os.path.join(data_dir, 'mnist_x_test.npy')
-y_test_path = os.path.join(data_dir, 'mnist_y_test.npy')
+
+x_train_path = 'data/mnist_data/mnist_x_train.npy'
+y_train_path = 'data/mnist_data/mnist_y_train.npy'
+x_test_path = 'data/mnist_data/mnist_x_test.npy'
+y_test_path = 'data/mnist_data/mnist_y_test.npy'
 
 # Load training set
 x_train = np.load(x_train_path)
