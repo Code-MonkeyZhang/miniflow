@@ -94,7 +94,7 @@ class Model:
                 for layer, prev_layer_output in reversed(self.layers_output):
                     if layer.activation == "Flatten":
                         break  # ignore Flatten layer
-                    backprop_gradient = layer.train_layer(prev_layer_output,
+                    backprop_gradient = layer.forward_prop(prev_layer_output,
                                                           prediction,
                                                           label_one_hot,
                                                           learning_rate,
