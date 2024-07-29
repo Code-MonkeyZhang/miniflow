@@ -17,7 +17,6 @@ class Layer:
     def set_weights(self, *args, **kwargs):
         pass
     def get_weights(self, *args, **kwargs):
-
         pass
     def get_bias(self, *args, **kwargs):
         pass
