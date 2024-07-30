@@ -18,7 +18,7 @@ class TestConv2D(unittest.TestCase):
         ]).reshape(1, 6, 6, 1)
 
         # 创建filter (3, 3, 1)
-        self.filter_weights = np.array([
+        self.Weights = np.array([
             [1, 0, -1],
             [1, 0, -1],
             [1, 0, -1]
@@ -29,7 +29,7 @@ class TestConv2D(unittest.TestCase):
                                  input_shape=(6, 6, 1), stride=(1, 1), padding='valid')
 
         # 设置filter权重
-        self.conv_layer.filter_weights = self.filter_weights.reshape(1, 3, 3, 1)
+        self.conv_layer.Weights = self.Weights.reshape(1, 3, 3, 1)
         self.conv_layer.Biases = np.array([0]).reshape(1, 1)
 
     def test_conv2d_output_shape(self):
@@ -87,7 +87,7 @@ class TestConv2D(unittest.TestCase):
         # 测试卷积核的初始化
         conv_layer = Conv2D(num_filter=2, kernel_size=(3, 3), activation=None, 
                             input_shape=(6, 6, 1), stride=(1, 1), padding='valid')
-        self.assertEqual(conv_layer.filter_weights.shape, (2, 3, 3, 1))
+        self.assertEqual(conv_layer.Weights.shape, (2, 3, 3, 1))
         self.assertEqual(conv_layer.Biases.shape, (2, 1))
 
     def test_activation_function(self):
@@ -95,14 +95,14 @@ class TestConv2D(unittest.TestCase):
             return np.maximum(0, x)
         conv_layer = Conv2D(num_filter=1, kernel_size=(3, 3), activation=relu, 
                             input_shape=(6, 6, 1), stride=(1, 1), padding='valid')
-        conv_layer.filter_weights = self.filter_weights.reshape(1, 3, 3, 1)
+        conv_layer.Weights = self.Weights.reshape(1, 3, 3, 1)
         output = conv_layer.compute_layer(self.input_image)
         self.assertTrue(np.all(output >= 0))
 
     def test_bias_addition(self):
         conv_layer = Conv2D(num_filter=1, kernel_size=(3, 3), activation=None, 
                             input_shape=(6, 6, 1), stride=(1, 1), padding='valid')
-        conv_layer.filter_weights = self.filter_weights.reshape(1, 3, 3, 1)
+        conv_layer.Weights = self.Weights.reshape(1, 3, 3, 1)
         conv_layer.Biases = np.array([1]).reshape(1, 1)
         output = conv_layer.compute_layer(self.input_image)
         expected_output = np.array([
@@ -121,14 +121,14 @@ class TestConv2D(unittest.TestCase):
     def test_large_stride(self):
         conv_layer = Conv2D(num_filter=1, kernel_size=(3, 3), activation=None, 
                             input_shape=(6, 6, 1), stride=(3, 3), padding='valid')
-        conv_layer.filter_weights = self.filter_weights.reshape(1, 3, 3, 1)
+        conv_layer.Weights = self.Weights.reshape(1, 3, 3, 1)
         output = conv_layer.compute_layer(self.input_image)
         self.assertEqual(output.shape, (1, 2, 2, 1))
 
     def test_asymmetric_kernel(self):
         conv_layer = Conv2D(num_filter=1, kernel_size=(2, 3), activation=None, 
                             input_shape=(6, 6, 1), stride=(1, 1), padding='valid')
-        conv_layer.filter_weights = np.random.randn(1, 2, 3, 1)
+        conv_layer.Weights = np.random.randn(1, 2, 3, 1)
         output = conv_layer.compute_layer(self.input_image)
         self.assertEqual(output.shape, (1, 5, 4, 1))
 
@@ -138,12 +138,12 @@ class TestConv2D(unittest.TestCase):
             [[4], [5], [6]],
             [[7], [8], [9]]
         ])
-        filter_weights = np.array([
+        Weights = np.array([
             [[1], [0], [-1]],
             [[1], [0], [-1]],
             [[1], [0], [-1]]
         ])
-        result = conv_single_step(image_slice, filter_weights)
+        result = conv_single_step(image_slice, Weights)
         expected_result = (1*1 + 2*0 + 3*-1 + 4*1 + 5*0 + 6*-1 + 7*1 + 8*0 + 9*-1)
         self.assertAlmostEqual(result, expected_result)
 

@@ -32,14 +32,14 @@ class Conv2D(Layer):
         self.layer_name = layer_name
 
         # init weights and biases
-        self.filter_weights = np.zeros((num_filter, kernel_size[0], kernel_size[1], input_shape[2]))
+        self.Weights = np.zeros((num_filter, kernel_size[0], kernel_size[1], input_shape[2]))
         self.Biases = np.zeros((num_filter, 1))
 
     def compute_layer(self, A_prev: np.ndarray) -> np.ndarray:
 
         # Retrieve parameters
         (num_example, example_height, example_width, num_channel) = A_prev.shape
-        (num_filter, f_height, f_width, num_channel) = self.filter_weights.shape
+        (num_filter, f_height, f_width, num_channel) = self.Weights.shape
 
         # Apply Padding
         if self.padding == "valid":
@@ -75,7 +75,7 @@ class Conv2D(Layer):
                         conv_slice = image[vert_start:vert_end, horiz_start:horiz_end, :]
 
                         # assign the value to Z[i, height, width, f]
-                        Z[i, height, width, f] = conv_single_step(conv_slice, self.filter_weights)
+                        Z[i, height, width, f] = conv_single_step(conv_slice, self.Weights)
 
         # Add bias to Z
         Z += self.Biases.reshape(1, 1, 1, num_filter)
@@ -86,8 +86,8 @@ class Conv2D(Layer):
         return Z
 
     def set_weights(self, weights, biases):
-        if weights.shape != self.filter_weights.shape:
-            raise ValueError(f"Weights shape mismatch. Expected {self.filter_weights.shape}, got {weights.shape}")
+        if weights.shape != self.Weights.shape:
+            raise ValueError(f"Weights shape mismatch. Expected {self.Weights.shape}, got {weights.shape}")
         if biases.shape != self.biases.shape:
             raise ValueError(f"Biases shape mismatch. Expected {self.biases.shape}, got {biases.shape}")
 

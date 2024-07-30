@@ -160,14 +160,14 @@ def label2onehot(label, units):
     return label_one_hot
 
 
-def conv_single_step(image_slice, filter_weights):
+def conv_single_step(image_slice, Weights):
     """
     Simple Convolution operation for a single step.
-    It multiplies a_slice_prev and filter_weights, and then sums over all entries.
+    It multiplies a_slice_prev and Weights, and then sums over all entries.
     Basic building block for a convolutional layer.
     """
     # Element-wise product between a_slice_prev and W. Do not add the bias yet.
-    s = np.multiply(image_slice, filter_weights)
+    s = np.multiply(image_slice, Weights)
     # Sum over all entries of the volume s.
     Z = np.sum(s)
 
