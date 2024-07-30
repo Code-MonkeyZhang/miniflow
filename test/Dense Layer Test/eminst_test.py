@@ -43,16 +43,6 @@ model = Model(
 
 model.set_rand_weight(method='He')
 
-# model.dense_array[1].set_weights(
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_1_weights.npy"),
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_1_biases.npy"))
-# model.dense_array[2].set_weights(
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_2_weights.npy"),
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_2_biases.npy"))
-# model.dense_array[3].set_weights(
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Softmax_weights.npy"),
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Softmax_biases.npy"))
-
 model.summary()
 
 model.compile(optimizer='adam',
