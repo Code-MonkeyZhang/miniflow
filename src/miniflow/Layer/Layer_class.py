@@ -1,5 +1,5 @@
-from .activation import *
-from .util import *
+from ..activation import *
+from ..util import *
 import numpy as np
 
 

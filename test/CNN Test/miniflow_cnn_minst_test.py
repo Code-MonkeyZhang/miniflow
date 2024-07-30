@@ -32,3 +32,5 @@ model = Model([
     Dense(64, activation='relu'),
     Dense(10, activation='softmax')
 ])
+
+model.summary()

@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from miniflow.util import *
-from miniflow.ConvLayer import Conv2D
+from miniflow.Layer import Conv2D
 
 
 

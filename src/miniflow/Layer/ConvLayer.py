@@ -1,5 +1,5 @@
 from .Layer_class import Layer
-from .util import*
+from ..util import*
 import numpy as np
 
 
