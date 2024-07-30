@@ -1,4 +1,5 @@
 from .activation import *
+from .util import *
 import numpy as np
 
 
@@ -150,11 +151,6 @@ class Dense(Layer):
 
         # 返回总参数数量
         return weight_params + bias_params
-
-
-# class Conv2D:
-
-# class MaxPooling2D:
 
 class FlattenLayer(Dense):
     def __init__(self, input_shape, layer_name='Flatten'):

@@ -159,10 +159,16 @@ def label2onehot(label, units):
     label_one_hot[np.arange(label.shape[0]), label] = 1
     return label_one_hot
 
-def zero_pad(X, pad):
-    """
-    Pad with zeros all images of the dataset X. The padding is applied to the height and width of an image,
-    """
-    X_pad = np.pad(X, ((0, 0), (pad, pad), (pad, pad), (0, 0)), 'constant', constant_values=(0, 0))
 
-    return X_pad
+def conv_single_step(image_slice, filter_weights):
+    """
+    Simple Convolution operation for a single step.
+    It multiplies a_slice_prev and filter_weights, and then sums over all entries.
+    Basic building block for a convolutional layer.
+    """
+    # Element-wise product between a_slice_prev and W. Do not add the bias yet.
+    s = np.multiply(image_slice, filter_weights)
+    # Sum over all entries of the volume s.
+    Z = np.sum(s)
+
+    return Z
