@@ -9,20 +9,22 @@ class Layer:
 
     def compute_layer(self, *args, **kwargs):
         pass
-    def forward_prop(self, *args, **kwargs):
-        pass
-    def compute_gradient(self, *args, **kwargs):
-        pass
-    def compute_cost_gradient(self, *args, **kwargs):
-        pass
-    def set_weights(self, *args, **kwargs):
-        pass
-    def get_weights(self, *args, **kwargs):
-        pass
-    def get_bias(self, *args, **kwargs):
-        pass
-    def set_random_weights(self, *args, **kwargs):
-        pass
+    def count_params(self):
+        # 初始化参数计数为0
+        total_params = 0
+        
+        # 如果层有Weights属性，计算权重参数的数量
+        if hasattr(self, 'Weights'):
+            weight_params = np.prod(self.Weights.shape)
+            total_params += weight_params
+
+        # 如果层有Biases属性，计算偏置参数的数量
+        if hasattr(self, 'Biases'):
+            bias_params = np.prod(self.Biases.shape)
+            total_params += bias_params
+
+        # 返回总参数数量
+        return total_params
 
 
 class Dense(Layer):
@@ -141,16 +143,6 @@ class Dense(Layer):
 
         # 偏置通常初始化为0或很小的常数
         self.Biases = np.zeros(self.Biases.shape)
-
-    def count_params(self):
-        # 计算权重参数的数量
-        weight_params = np.prod(self.Weights.shape)
-
-        # 计算偏置参数的数量
-        bias_params = np.prod(self.Biases.shape)
-
-        # 返回总参数数量
-        return weight_params + bias_params
 
 class FlattenLayer(Dense):
     def __init__(self, input_shape, layer_name='Flatten'):
