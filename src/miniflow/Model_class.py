@@ -11,8 +11,8 @@ Model Class
 
 
 class Model:
-    def __init__(self, dense_array: List[Dense], cost, name='model') -> None:
-        self.dense_array = dense_array
+    def __init__(self, layers_array: List[Dense], cost, name='model') -> None:
+        self.layers_array = layers_array
         self.layers_output = []
         self.name = name
         self.cost = cost
@@ -26,7 +26,7 @@ class Model:
     # Iterate through each layer, and puts its output to the next layer
     def predict(self, x: np.ndarray) -> np.ndarray:
         prev_layer_output = x
-        for dense_layer in self.dense_array:
+        for dense_layer in self.layers_array:
             self.layers_output.append((dense_layer, prev_layer_output))
             layer_output = dense_layer.compute_layer(prev_layer_output)
             prev_layer_output = layer_output
@@ -74,7 +74,7 @@ class Model:
                 label = y_batch_list[i]
 
                 # Convert label to one-hot
-                label_one_hot = label2onehot(label, units=self.dense_array[-1].units)
+                label_one_hot = label2onehot(label, units=self.layers_array[-1].units)
 
                 ############################## Forward PROP ########################################
 
@@ -87,7 +87,7 @@ class Model:
                 ############################## START TRAINING ########################################
 
                 # init backprop_gradient as all ones
-                backprop_gradient = np.ones(self.dense_array[-1].get_weights().shape)
+                backprop_gradient = np.ones(self.layers_array[-1].get_weights().shape)
 
                 self.iter_num += 1
                 # reverse iterate layers Start backprop
@@ -117,7 +117,7 @@ class Model:
             plot_loss(epoch_lost_list)
 
     def set_rand_weight(self,method='He'):
-        for layer in self.dense_array:
+        for layer in self.layers_array:
             if layer.layer_name == "Flatten":
                 continue
             if method == 'He':
@@ -129,7 +129,7 @@ class Model:
                 layer.set_random_weights()
 
     def save(self, path=""):
-        for layer in self.dense_array:
+        for layer in self.layers_array:
             if layer.layer_name == "Flatten":
                 continue
             np.save(path + layer.layer_name + "_w" + ".npy", layer.get_weights())
@@ -146,7 +146,7 @@ class Model:
                                                      "Activation"))
         print("=" * 120)
 
-        for layer in self.dense_array:
+        for layer in self.layers_array:
             # Get weight shape
             weight_shape = layer.Weights.shape if hasattr(layer, 'Weights') else 'No weights'
 

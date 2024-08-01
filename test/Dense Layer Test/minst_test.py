@@ -37,9 +37,9 @@ y_samples = y_train[0:sample_size]
 ############################## Train the model ########################################
 
 # Set initial weights from stored files
-model.dense_array[1].set_weights(np.load("./weights/RandomWeights/L1_w.npy"), np.load("./weights/RandomWeights/L1_b.npy"))
-model.dense_array[2].set_weights(np.load("./weights/RandomWeights/L2_w.npy"), np.load("./weights/RandomWeights/L2_b.npy"))
-model.dense_array[3].set_weights(np.load("./weights/RandomWeights/L3_w.npy"), np.load("./weights/RandomWeights/L3_b.npy"))
+model.layers_array[1].set_weights(np.load("./weights/RandomWeights/L1_w.npy"), np.load("./weights/RandomWeights/L1_b.npy"))
+model.layers_array[2].set_weights(np.load("./weights/RandomWeights/L2_w.npy"), np.load("./weights/RandomWeights/L2_b.npy"))
+model.layers_array[3].set_weights(np.load("./weights/RandomWeights/L3_w.npy"), np.load("./weights/RandomWeights/L3_b.npy"))
 
 # Compile the model with settings
 model.compile(optimizer='adam',
