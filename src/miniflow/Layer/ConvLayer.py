@@ -6,7 +6,7 @@ import numpy as np
 
 class Conv2D(Layer):
     def __init__(self, num_filter, kernel_size, activation, input_shape, stride=(1, 1), padding='valid',
-                 layer_name='layer'):
+                 layer_name='Conv2D'):
 
         # Input validation
         # Check if num_filter is a positive integer

@@ -17,6 +17,7 @@ y_test = np.load(y_test_path)
 x_train, x_test = x_train / 255.0, x_test / 255.0  # Normalize
 
 ############################# Create Model ########################################
+
 model = Model([
     Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
     MaxPooling2D((2, 2), input_shape=(26, 26, 32)),
@@ -40,3 +41,8 @@ model.layers_array[6].set_weights(np.load("./weights/simple_CNN_weights/dense_10
                                   np.load("./weights/simple_CNN_weights/dense_10_biases.npy"))
 
 model.summary()
+
+model.compile(optimizer='adam',
+              alpha_decay=True,
+              show_summary=False,
+              plot_loss=False, )

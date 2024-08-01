@@ -38,6 +38,11 @@ class Model:
         self.plot_loss = plot_loss
         self.alpha_decay = alpha_decay
 
+        # auto assign input shape & output shape
+
+        # iterate all layers
+        #
+
     def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32,
             b1=0.2,
             b2=0.999,
@@ -92,15 +97,16 @@ class Model:
                 self.iter_num += 1
                 # reverse iterate layers Start backprop
                 for layer, prev_layer_output in reversed(self.layers_output):
-                    if layer.activation == "Flatten":
+                    layer_type = type(layer).__name__
+                    if layer_type == "FlattenLayer":
                         break  # ignore Flatten layer
                     backprop_gradient = layer.forward_prop(prev_layer_output,
-                                                          prediction,
-                                                          label_one_hot,
-                                                          learning_rate,
-                                                          b1, b2, epsilon,
-                                                          backprop_gradient,
-                                                          self.iter_num)
+                                                           prediction,
+                                                           label_one_hot,
+                                                           learning_rate,
+                                                           b1, b2, epsilon,
+                                                           backprop_gradient,
+                                                           self.iter_num)
 
             tok = time.time()
             epoch_time = 1000 * (tok - tic)
@@ -116,9 +122,9 @@ class Model:
         if self.plot_loss:
             plot_loss(epoch_lost_list)
 
-    def set_rand_weight(self,method='He'):
+    def set_rand_weight(self, method='He'):
         for layer in self.layers_array:
-            if layer.layer_name == "Flatten":
+            if type(layer).__name__ == "FlattenLayer":
                 continue
             if method == 'He':
                 layer.set_he_weights()
@@ -128,7 +134,7 @@ class Model:
             elif method == 'Random':
                 layer.set_random_weights()
 
-    def save(self, path=""):
+    def save_params(self, path=""):
         for layer in self.layers_array:
             if layer.layer_name == "Flatten":
                 continue
@@ -151,7 +157,7 @@ class Model:
             weight_shape = layer.Weights.shape if hasattr(layer, 'Weights') else 'No weights'
 
             # Assuming each layer has a `output_shape()` method that calculates its output shape
-            output_shape = layer.output_shape() if hasattr(layer, 'output_shape') else 'Unknown'
+            output_shape = layer.get_output_shape() if hasattr(layer, 'output_shape') else 'Unknown'
 
             # Calculating parameters; this assumes layer has `count_params()` method
             params = layer.count_params() if hasattr(layer, 'count_params') else 0

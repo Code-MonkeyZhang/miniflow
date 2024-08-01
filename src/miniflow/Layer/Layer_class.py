@@ -4,15 +4,18 @@ import numpy as np
 
 
 class Layer:
-    def __init__(self, layer_name='layer'):
+    def __init__(self, input_shape, output_shape, layer_name='layer'):
         self.layer_name = layer_name
+        self.input_shape = input_shape
+        self.output_shape = output_shape
 
     def compute_layer(self, *args, **kwargs):
         pass
+
     def count_params(self):
         # 初始化参数计数为0
         total_params = 0
-        
+
         # 如果层有Weights属性，计算权重参数的数量
         if hasattr(self, 'Weights'):
             weight_params = np.prod(self.Weights.shape)
@@ -28,7 +31,7 @@ class Layer:
 
 
 class Dense(Layer):
-    def __init__(self, units: int, activation: str, layer_name='layer', input_shape: int = 0):
+    def __init__(self, units: int, activation: str, input_shape, layer_name='Dense'):
         self.units = units
         self.activation = activation
         self.layer_name = layer_name
@@ -58,7 +61,7 @@ class Dense(Layer):
         return a_out
 
     def forward_prop(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
-                    backprop_gradient, iter_num) -> np.ndarray:
+                     backprop_gradient, iter_num) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
         # 这个计算以后要独立出来，目前先放在这里
@@ -144,12 +147,12 @@ class Dense(Layer):
         # 偏置通常初始化为0或很小的常数
         self.Biases = np.zeros(self.Biases.shape)
 
-class FlattenLayer(Dense):
+
+class FlattenLayer(Layer):
     def __init__(self, input_shape, layer_name='Flatten'):
         # Flatten layer doesn't need units & activation
-        super().__init__(units=0, layer_name=layer_name, activation="Flatten")
         self.input_shape = input_shape
-        self.activation = "Flatten"
+        self.output_shape = self.get_output_shape()
 
     def compute_layer(self, input_array):
         """
@@ -169,5 +172,5 @@ class FlattenLayer(Dense):
     def count_params(self):
         return 0
 
-    def output_shape(self):
-        return (None, np.prod(self.input_shape))
+    def get_output_shape(self):
+        return np.prod(self.input_shape)
