@@ -4,10 +4,10 @@ from matplotlib import pyplot as plt
 from miniflow import Model, Dense, FlattenLayer
 
 
-x_train_path = '../data/mnist_data/mnist_x_train.npy'
-y_train_path = '../data/mnist_data/mnist_y_train.npy'
-x_test_path = '../data/mnist_data/mnist_x_test.npy'
-y_test_path = '../data/mnist_data/mnist_y_test.npy'
+x_train_path = './data/mnist_data/mnist_x_train.npy'
+y_train_path = './data/mnist_data/mnist_y_train.npy'
+x_test_path = './data/mnist_data/mnist_x_test.npy'
+y_test_path = './data/mnist_data/mnist_y_test.npy'
 
 # Load training set
 x_train = np.load(x_train_path)
@@ -37,9 +37,9 @@ y_samples = y_train[0:sample_size]
 ############################## Train the model ########################################
 
 # Set initial weights from stored files
-model.dense_array[1].set_weights(np.load("../weights/RandomWeights/L1_w.npy"), np.load("../weights/RandomWeights/L1_b.npy"))
-model.dense_array[2].set_weights(np.load("../weights/RandomWeights/L2_w.npy"), np.load("../weights/RandomWeights/L2_b.npy"))
-model.dense_array[3].set_weights(np.load("../weights/RandomWeights/L3_w.npy"), np.load("../weights/RandomWeights/L3_b.npy"))
+model.dense_array[1].set_weights(np.load("./weights/RandomWeights/L1_w.npy"), np.load("./weights/RandomWeights/L1_b.npy"))
+model.dense_array[2].set_weights(np.load("./weights/RandomWeights/L2_w.npy"), np.load("./weights/RandomWeights/L2_b.npy"))
+model.dense_array[3].set_weights(np.load("./weights/RandomWeights/L3_w.npy"), np.load("./weights/RandomWeights/L3_b.npy"))
 
 # Compile the model with settings
 model.compile(optimizer='adam',

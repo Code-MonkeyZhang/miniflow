@@ -1,5 +1,6 @@
 from .Layer_class import Layer
-from ..util import*
+from ..util import *
+from ..activation import relu_function
 import numpy as np
 
 
@@ -32,14 +33,14 @@ class Conv2D(Layer):
         self.layer_name = layer_name
 
         # init weights and biases
-        self.Weights = np.zeros((num_filter, kernel_size[0], kernel_size[1], input_shape[2]))
-        self.Biases = np.zeros((num_filter, 1))
+        self.Weights = np.zeros((kernel_size[0], kernel_size[1], input_shape[2], num_filter))
+        self.Biases = np.zeros((num_filter))
 
     def compute_layer(self, A_prev: np.ndarray) -> np.ndarray:
 
         # Retrieve parameters
-        (num_example, example_height, example_width, num_channel) = A_prev.shape
-        (num_filter, f_height, f_width, num_channel) = self.Weights.shape
+        (num_example, example_height, example_width, in_num_channel) = A_prev.shape
+        (f_height, f_width, out_num_channel, num_filter) = self.Weights.shape
 
         # Apply Padding
         if self.padding == "valid":
@@ -74,21 +75,24 @@ class Conv2D(Layer):
                         # For example, a 6*6*3 image will be sliced to 3*3*3
                         conv_slice = image[vert_start:vert_end, horiz_start:horiz_end, :]
 
-                        # assign the value to Z[i, height, width, f]
-                        Z[i, height, width, f] = conv_single_step(conv_slice, self.Weights)
+                        # Perform convolution operation & store the result in corresponding position in Z
+                        conv_result = conv_single_step(conv_slice, self.Weights)
+                        Z[i, height, width, f] = conv_result
 
         # Add bias to Z
         Z += self.Biases.reshape(1, 1, 1, num_filter)
         # Apply activation function to the entire Z tensor
-        if self.activation:
-            Z = self.activation(Z)
+        if self.activation == 'relu':
+            Z = relu_function(Z)
 
         return Z
 
-    def set_weights(self, weights, biases):
+    def set_weights(self, weights):
         if weights.shape != self.Weights.shape:
             raise ValueError(f"Weights shape mismatch. Expected {self.Weights.shape}, got {weights.shape}")
-        if biases.shape != self.biases.shape:
-            raise ValueError(f"Biases shape mismatch. Expected {self.biases.shape}, got {biases.shape}")
+        self.Weights = weights
 
-
+    def set_bias(self, biases):
+        if biases.shape != self.Biases.shape:
+            raise ValueError(f"Biases shape mismatch. Expected {self.Biases.shape}, got {biases.shape}")
+        self.Biases = biases

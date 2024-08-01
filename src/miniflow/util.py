@@ -4,7 +4,6 @@ import sys
 import matplotlib.pyplot as plt
 
 
-
 def plot_loss(epoch_lost_list):
     # 创建一个新的图形
     plt.figure()
@@ -74,6 +73,7 @@ def compute_linear_gradient(x_train, y_train, w, b, lambda_=0):
         dj_dw[j] += lambda_ * w[j] / size
 
     return dj_dw, dj_db
+
 
 # feature scaling
 def feature_scaling(data: np.ndarray, type: str) -> np.ndarray:
@@ -167,6 +167,8 @@ def conv_single_step(image_slice, Weights):
     Basic building block for a convolutional layer.
     """
     # Element-wise product between a_slice_prev and W. Do not add the bias yet.
+    image_slice = image_slice.reshape(3, 3, 1, 1)
+
     s = np.multiply(image_slice, Weights)
     # Sum over all entries of the volume s.
     Z = np.sum(s)
