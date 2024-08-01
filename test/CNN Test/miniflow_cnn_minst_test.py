@@ -19,18 +19,23 @@ x_train, x_test = x_train / 255.0, x_test / 255.0  # Normalize
 ############################# Create Model ########################################
 model = Model([
     Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
-    MaxPooling2D((2, 2)), # type: ignore
-    Conv2D(64, (3, 3), activation='relu'),
-    MaxPooling2D((2, 2)),
-    FlattenLayer(),
-    Dense(64, activation='relu'),
-    Dense(10, activation='softmax')
-])
+    MaxPooling2D((2, 2), input_shape=(26, 26, 32)),
+    Conv2D(64, (3, 3), activation='relu', input_shape=(13, 13, 32)),
+    MaxPooling2D((2, 2), input_shape=(11, 11, 64)),
+    FlattenLayer(input_shape=(5, 5, 64)),
+    Dense(64, activation='relu', input_shape=1600),
+    Dense(10, activation='softmax', input_shape=64)
+], name="my_model", cost="softmax")
 
 # load weights from file
-model.
+model.layers_array[0].set_weights(np.load("./weights/simple_CNN_weights/conv2d_3x3_32_weights.npy"))
+model.layers_array[0].set_bias(np.load("./weights/simple_CNN_weights/conv2d_3x3_32_biases.npy"))
+                                  
+model.layers_array[2].set_weights(np.load("./weights/simple_CNN_weights/conv2d_3x3_64_weights.npy"))
+model.layers_array[2].set_bias(np.load("./weights/simple_CNN_weights/conv2d_3x3_64_biases.npy"))
+
+model.layers_array[5].set_weights(np.load("./weights/simple_CNN_weights/dense_64_weights.npy"),np.load("./weights/simple_CNN_weights/dense_64_weights.npy"))
+model.layers_array[6].set_weights(np.load("./weights/simple_CNN_weights/dense_10_weights.npy"),np.load("./weights/simple_CNN_weights/dense_10_weights.npy"))
 
 model.summary()
-
-
 
