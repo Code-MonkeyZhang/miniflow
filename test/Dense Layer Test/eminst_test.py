@@ -16,8 +16,8 @@ def load_data(filename):
 
 
 # 设置文件路径
-train_file = '../data/eminst/emnist-balanced-train.csv'
-test_file = '../data/eminst/emnist-balanced-test.csv'
+train_file = './data/eminst/emnist-balanced-train.csv'
+test_file = './data/eminst/emnist-balanced-test.csv'
 
 # 加载数据
 x_train, y_train = load_data(train_file)
