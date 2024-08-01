@@ -30,12 +30,13 @@ model = Model([
 # load weights from file
 model.layers_array[0].set_weights(np.load("./weights/simple_CNN_weights/conv2d_3x3_32_weights.npy"))
 model.layers_array[0].set_bias(np.load("./weights/simple_CNN_weights/conv2d_3x3_32_biases.npy"))
-                                  
+
 model.layers_array[2].set_weights(np.load("./weights/simple_CNN_weights/conv2d_3x3_64_weights.npy"))
 model.layers_array[2].set_bias(np.load("./weights/simple_CNN_weights/conv2d_3x3_64_biases.npy"))
 
-model.layers_array[5].set_weights(np.load("./weights/simple_CNN_weights/dense_64_weights.npy"),np.load("./weights/simple_CNN_weights/dense_64_weights.npy"))
-model.layers_array[6].set_weights(np.load("./weights/simple_CNN_weights/dense_10_weights.npy"),np.load("./weights/simple_CNN_weights/dense_10_weights.npy"))
+model.layers_array[5].set_weights(np.load("./weights/simple_CNN_weights/dense_64_weights.npy"),
+                                  np.load("./weights/simple_CNN_weights/dense_64_biases.npy"))
+model.layers_array[6].set_weights(np.load("./weights/simple_CNN_weights/dense_10_weights.npy"),
+                                  np.load("./weights/simple_CNN_weights/dense_10_biases.npy"))
 
 model.summary()
-
