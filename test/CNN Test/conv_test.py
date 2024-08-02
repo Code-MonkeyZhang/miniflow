@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from miniflow import Conv2D  # 请确保根据实际情况修改导入语句
+from miniflow import Conv2D,MaxPooling2D  # 请确保根据实际情况修改导入语句
 
 
 class TestConv2D(unittest.TestCase):
@@ -41,6 +41,35 @@ class TestConv2D(unittest.TestCase):
             [0, 30, 30, 0],
             [0, 30, 30, 0]
         ]).reshape(1, 4, 4, 1)  # 添加批次和通道维度
+
+        # 验证结果
+        np.testing.assert_array_equal(result, expected_output)
+
+
+
+
+class TestMaxPooling2D(unittest.TestCase):
+    def test_valid_padding_stride1(self):
+        # 创建一个 MaxPooling2D 实例
+        pool = MaxPooling2D(pool_size=(2, 2), input_shape=(4, 4, 1), stride=(1, 1), padding='valid')
+
+        # 创建输入
+        input_data = np.array([
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9, 10, 11, 12],
+            [13, 14, 15, 16]
+        ]).reshape(1, 4, 4, 1)
+
+        # 计算池化结果
+        result = pool.compute_layer(input_data)
+
+        # 期望的输出
+        expected_output = np.array([
+            [6, 7, 8],
+            [10, 11, 12],
+            [14, 15, 16]
+        ]).reshape(1, 3, 3, 1)
 
         # 验证结果
         np.testing.assert_array_equal(result, expected_output)
