@@ -4,12 +4,13 @@ import numpy as np
 
 
 class Layer:
-    def __init__(self, input_shape, output_shape, layer_name='layer'):
+    def __init__(self, layer_name='layer'):
         self.layer_name = layer_name
-        self.input_shape = input_shape
-        self.output_shape = output_shape
 
     def compute_layer(self, *args, **kwargs):
+        pass
+
+    def get_output_shape(self, *args, **kwargs):
         pass
 
     def count_params(self):
@@ -151,6 +152,7 @@ class Dense(Layer):
 class FlattenLayer(Layer):
     def __init__(self, input_shape, layer_name='Flatten'):
         # Flatten layer doesn't need units & activation
+
         self.input_shape = input_shape
         self.output_shape = self.get_output_shape()
 

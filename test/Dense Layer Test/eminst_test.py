@@ -52,7 +52,7 @@ model.compile(optimizer='adam',
               )
 
 # 训练模型
-model.fit(x_train, y_train, learning_rate=5e-5, epochs=10, batch_size=32, b1=0.9)
+model.fit(x_train, y_train, learning_rate=5e-5, epochs=2, batch_size=32, b1=0.9)
 predictions = model.predict(x_test)
 
 # 计算准确率
