@@ -126,6 +126,30 @@ class TestMaxPooling2D(unittest.TestCase):
             3, 3), input_shape=(7, 7, 2), stride=(2, 2))
         self.assertEqual(pool.output_shape, (3, 3, 2))
 
+    def test_output_shape_stride1(self):
+        # Test: Verify the correct calculation of output shape for MaxPooling2D with stride 1
+        pool = MaxPooling2D(pool_size=(
+            2, 2), input_shape=(10, 10, 3), stride=(1, 1))
+        self.assertEqual(pool.output_shape, (9, 9, 3))
+
+    def test_output_shape_stride2(self):
+        # Test: Verify the correct calculation of output shape for MaxPooling2D with stride 2
+        pool = MaxPooling2D(pool_size=(
+            2, 2), input_shape=(8, 8, 4), stride=(2, 2))
+        self.assertEqual(pool.output_shape, (4, 4, 4))
+
+    def test_output_shape_rectangular_input(self):
+        # Test: Verify the correct calculation of output shape for MaxPooling2D with rectangular input
+        pool = MaxPooling2D(pool_size=(
+            3, 3), input_shape=(15, 25, 2), stride=(2, 2))
+        self.assertEqual(pool.output_shape, (7, 12, 2))
+
+    def test_output_shape_uneven_pool_size(self):
+        # Test: Verify the correct calculation of output shape for MaxPooling2D with uneven pool size
+        pool = MaxPooling2D(pool_size=(
+            2, 3), input_shape=(12, 12, 1), stride=(1, 1))
+        self.assertEqual(pool.output_shape, (11, 10, 1))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
