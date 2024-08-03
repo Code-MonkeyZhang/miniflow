@@ -51,14 +51,16 @@ class Dense(Layer):
         z = np.dot(a_in, self.Weights.T) + self.Biases
         if self.activation == "sigmoid":
             a_out = sigmoid_function(z)
-        if self.activation == "linear":
+        elif self.activation == "linear":
             a_out = z
-        if self.activation == "relu":
+        elif self.activation == "relu":
             a_out = relu_function(z)
-        if self.activation == 'softmax':
+        elif self.activation == 'softmax':
             z_max = np.max(z, axis=1, keepdims=True)
             exp_z = np.exp(z - z_max)  # 减去z中的最大值以避免溢出
             a_out = exp_z / np.sum(exp_z, axis=1, keepdims=True)  # 按行计算softmax
+        else:
+            raise ValueError(f"Unsupported activation function: {self.activation}")
         return a_out
 
     def forward_prop(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,

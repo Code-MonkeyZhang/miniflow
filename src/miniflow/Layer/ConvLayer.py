@@ -57,7 +57,7 @@ class Conv2D(Layer):
         # Compute the dimensions of the CONV output volume
         # Formula: (n_H - f_H + 2*padding) / stride + 1
         out_height = int((example_height - f_height +
-                         2 * pad) / vert_stride) + 1
+                          2 * pad) / vert_stride) + 1
         out_width = int((example_width - f_width + 2 * pad) /
                         horiz_stride) + 1
 
@@ -78,7 +78,7 @@ class Conv2D(Layer):
                 for f in range(num_filter):
                     # extract the slice from all images, choose all channels
                     conv_slice = A_prev_pad[:, vert_start:vert_end,
-                                            horiz_start:horiz_end, :]
+                                 horiz_start:horiz_end, :]
                     # Perform convolution operation & store the result in corresponding position in Z
                     conv_result = np.sum(
                         conv_slice * self.Weights[:, :, :, f], axis=(1, 2, 3))
