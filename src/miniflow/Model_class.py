@@ -11,6 +11,7 @@ Model Class
 
 
 class Model:
+
     def __init__(self, layers_array: List[Dense], cost, name='model') -> None:
         self.layers_array = layers_array
         self.layers_output = []
@@ -38,11 +39,6 @@ class Model:
         self.plot_loss = plot_loss
         self.alpha_decay = alpha_decay
 
-        # auto assign input shape & output shape
-
-        # iterate all layers
-        #
-
     def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32,
             b1=0.2,
             b2=0.999,
@@ -65,7 +61,8 @@ class Model:
 
             print("Epoch {}/{}  ".format(epoch + 1, epochs))
             # Divide X_train into pieces, each piece is the size of batch size
-            X_batch_list, y_batch_list = slice2batches(X_train, y_train, batch_size)
+            X_batch_list, y_batch_list = slice2batches(
+                X_train, y_train, batch_size)
 
             batch_num = len(X_batch_list)
 
@@ -78,21 +75,19 @@ class Model:
                 train_example = X_batch_list[i]
                 label = y_batch_list[i]
 
-                # Convert label to one-hot
-                label_one_hot = label2onehot(label, units=self.layers_array[-1].units)
-
                 ############################## Forward PROP ########################################
 
                 self.layers_output.clear()  # Clear the layers_output before Start
                 prediction = self.predict(train_example)
-
-                error = compute_cross_entropy_loss(prediction, label_one_hot)
+                # error = compute_error(prediction=prediction, label=label)
+                error = compute_cross_entropy_loss(prediction, label)
                 epoch_lost += error
 
                 ############################## START TRAINING ########################################
 
                 # init backprop_gradient as all ones
-                backprop_gradient = np.ones(self.layers_array[-1].get_weights().shape)
+                backprop_gradient = np.ones(
+                    self.layers_array[-1].get_weights().shape)
 
                 self.iter_num += 1
                 # reverse iterate layers Start backprop
@@ -102,7 +97,7 @@ class Model:
                         break  # ignore Flatten layer
                     backprop_gradient = layer.forward_prop(prev_layer_output,
                                                            prediction,
-                                                           label_one_hot,
+                                                           label,
                                                            learning_rate,
                                                            b1, b2, epsilon,
                                                            backprop_gradient,
@@ -115,7 +110,8 @@ class Model:
             epoch_lost = epoch_lost / batch_num
             epoch_lost_list.append(epoch_lost)
 
-            print(" - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, epoch_time))
+            print(
+                " - Cost {:.6f} / Time {:.4f} ms".format(epoch_lost, epoch_time))
 
         if self.show_summary:
             train_summary(loss=epoch_lost_list, time=epoch_time_list)
@@ -138,7 +134,8 @@ class Model:
         for layer in self.layers_array:
             if layer.layer_name == "Flatten":
                 continue
-            np.save(path + layer.layer_name + "_w" + ".npy", layer.get_weights())
+            np.save(path + layer.layer_name + "_w" +
+                    ".npy", layer.get_weights())
             np.save(path + layer.layer_name + "_b" + ".npy", layer.get_bias())
 
     def summary(self):
@@ -154,10 +151,12 @@ class Model:
 
         for layer in self.layers_array:
             # Get weight shape
-            weight_shape = layer.Weights.shape if hasattr(layer, 'Weights') else 'No weights'
+            weight_shape = layer.Weights.shape if hasattr(
+                layer, 'Weights') else 'No weights'
 
             # Assuming each layer has a `output_shape()` method that calculates its output shape
-            output_shape = layer.get_output_shape() if hasattr(layer, 'output_shape') else 'Unknown'
+            output_shape = layer.get_output_shape() if hasattr(
+                layer, 'output_shape') else 'Unknown'
 
             # Calculating parameters; this assumes layer has `count_params()` method
             params = layer.count_params() if hasattr(layer, 'count_params') else 0
@@ -165,7 +164,8 @@ class Model:
 
             # Prepare the layer activation, type, and name info
             layer_info = type(layer).__name__
-            layer_name = layer.layer_name if hasattr(layer, 'layer_name') else 'Unnamed Layer'
+            layer_name = layer.layer_name if hasattr(
+                layer, 'layer_name') else 'Unnamed Layer'
             activation = getattr(layer, 'activation', 'None')
 
             # Print layer details

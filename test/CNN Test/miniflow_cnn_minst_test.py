@@ -1,6 +1,8 @@
 import os
 import numpy as np
 from miniflow import Model, Dense, FlattenLayer, Conv2D, MaxPooling2D
+from miniflow.util import label2onehot
+import time
 
 x_train_path = './data/mnist_data/mnist_x_train.npy'
 y_train_path = './data/mnist_data/mnist_y_train.npy'
@@ -18,6 +20,11 @@ y_test = np.load(y_test_path)
 # Normalize and reshape
 x_train = (x_train / 255.0).reshape(-1, 28, 28, 1)
 x_test = (x_test / 255.0).reshape(-1, 28, 28, 1)
+
+# Convert y_train to OneHot
+# 希望可以自己判断 one-hot 类别的数量
+y_train = label2onehot(y_train, units=10)
+
 
 ############################# Create Model ########################################
 
@@ -55,7 +62,11 @@ model.compile(optimizer='adam',
               plot_loss=False, )
 
 # Predictions using the trained model
+start_time = time.time()
 predictions = model.predict(x_test)
+end_time = time.time()
+
+print(f"Prediction time: {end_time - start_time:.2f} seconds")
 
 # Assume 'predictions' are the output of your model, now you need to convert it to class labels
 # Get the index of the highest probability as the prediction label

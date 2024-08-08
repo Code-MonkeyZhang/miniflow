@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import miniflow
 from matplotlib import pyplot as plt
 from miniflow import Model, Dense, FlattenLayer
 
@@ -16,6 +17,7 @@ y_train = np.load(y_train_path)
 x_test = np.load(x_test_path)
 y_test = np.load(y_test_path)
 x_train, x_test = x_train / 255.0, x_test / 255.0  # Normalize
+y_train = miniflow.label2onehot(y_train, units=10)
 
 ############################## Create Model ########################################
 
@@ -63,8 +65,10 @@ model.fit(x_samples,
 predictions = model.predict(x_test)
 
 # Assume 'predictions' are the output of your model, now you need to convert it to class labels
-predictions = np.argmax(predictions, axis=1)  # Get the index of the highest probability as the prediction label
+# Get the index of the highest probability as the prediction label
+predictions = np.argmax(predictions, axis=1)
 
 # Calculate accuracy
-accuracy = np.mean(predictions == y_test)  # Compare predicted labels with actual labels to calculate accuracy
+# Compare predicted labels with actual labels to calculate accuracy
+accuracy = np.mean(predictions == y_test)
 print(f"Test Accuracy: {accuracy * 100:.2f}%")
