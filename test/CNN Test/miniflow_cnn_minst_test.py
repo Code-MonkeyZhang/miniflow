@@ -59,7 +59,8 @@ model.summary()
 model.compile(optimizer='adam',
               alpha_decay=True,
               show_summary=False,
-              plot_loss=False, )
+              plot_loss=False,
+              loss_method="categorical_crossentropy")
 
 # Predictions using the trained model
 start_time = time.time()

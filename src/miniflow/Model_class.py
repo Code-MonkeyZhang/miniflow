@@ -23,6 +23,7 @@ class Model:
         self.show_summary = None
         self.plot_loss = None
         self.alpha_decay = None
+        self.loss_method = None
 
     # Iterate through each layer, and puts its output to the next layer
     def predict(self, x: np.ndarray) -> np.ndarray:
@@ -33,11 +34,12 @@ class Model:
             prev_layer_output = layer_output
         return prev_layer_output
 
-    def compile(self, optimizer=None, alpha_decay=True, show_summary=False, plot_loss=False):
+    def compile(self, optimizer=None, alpha_decay=True, show_summary=False, plot_loss=False, loss_method=""):
         self.optimizer = optimizer
         self.show_summary = show_summary
         self.plot_loss = plot_loss
         self.alpha_decay = alpha_decay
+        self.loss_method = loss_method
 
     def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32,
             b1=0.2,
@@ -79,8 +81,8 @@ class Model:
 
                 self.layers_output.clear()  # Clear the layers_output before Start
                 prediction = self.predict(train_example)
-                # error = compute_error(prediction=prediction, label=label)
-                error = compute_cross_entropy_loss(prediction, label)
+                error = self.compute_error(
+                    prediction=prediction, label=label, loss_method=self.loss_method)
                 epoch_lost += error
 
                 ############################## START TRAINING ########################################
@@ -95,7 +97,7 @@ class Model:
                     layer_type = type(layer).__name__
                     if layer_type == "FlattenLayer":
                         break  # ignore Flatten layer
-                    backprop_gradient = layer.forward_prop(prev_layer_output,
+                    backprop_gradient = layer.backward_prop(prev_layer_output,
                                                            prediction,
                                                            label,
                                                            learning_rate,
@@ -117,6 +119,10 @@ class Model:
             train_summary(loss=epoch_lost_list, time=epoch_time_list)
         if self.plot_loss:
             plot_loss(epoch_lost_list)
+
+    def compute_error(self, prediction, label, loss_method):
+        if loss_method == "categorical_crossentropy":
+            return compute_cross_entropy_loss(prediction, label)
 
     def set_rand_weight(self, method='He'):
         for layer in self.layers_array:

@@ -7,10 +7,13 @@ class Layer:
     def __init__(self, layer_name='layer'):
         self.layer_name = layer_name
 
+    def get_output_shape(self, *args, **kwargs):
+        pass
+
     def compute_layer(self, *args, **kwargs):
         pass
 
-    def get_output_shape(self, *args, **kwargs):
+    def backward_prop(self, *args, **kwargs):
         pass
 
     def count_params(self):
@@ -60,18 +63,20 @@ class Dense(Layer):
             exp_z = np.exp(z - z_max)  # 减去z中的最大值以避免溢出
             a_out = exp_z / np.sum(exp_z, axis=1, keepdims=True)  # 按行计算softmax
         else:
-            raise ValueError(f"Unsupported activation function: {self.activation}")
+            raise ValueError(
+                f"Unsupported activation function: {self.activation}")
         return a_out
 
-    def forward_prop(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
-                     backprop_gradient, iter_num) -> np.ndarray:
+    def backward_prop(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
+                      backprop_gradient, iter_num) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
         # 这个计算以后要独立出来，目前先放在这里
         cost_func_gradient = np.subtract(curr_layer_output, label)
 
         # obtain gradients of weights and bias for updates
-        dl_dw, dj_db, dl_dz = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
+        dl_dw, dj_db, dl_dz = self.compute_gradient(
+            prev_layer_output, cost_func_gradient, backprop_gradient)
 
         # 根据 chain rule, 传给上一层的gradient应该是:
         # dl/da = dl/ds * ds/da
@@ -86,14 +91,17 @@ class Dense(Layer):
         vdb_corrected = self.Biases_Velocity / (1 - b1 ** iter_num)
 
         # RMS prop
-        self.Squared_Weights = b2 * self.Squared_Weights + (1 - b2) * np.square(vdw_corrected)
-        self.Squared_Biases = b2 * self.Squared_Biases + (1 - b2) * np.square(vdb_corrected)
+        self.Squared_Weights = b2 * self.Squared_Weights + \
+            (1 - b2) * np.square(vdw_corrected)
+        self.Squared_Biases = b2 * self.Squared_Biases + \
+            (1 - b2) * np.square(vdb_corrected)
 
         sdw_corrected = self.Squared_Weights / (1 - b2 ** iter_num)
         sdb_corrected = self.Squared_Biases / (1 - b2 ** iter_num)
 
         # perform gradient descent, update gradient
-        self.Weights -= alpha * vdw_corrected / np.sqrt(sdw_corrected + epsilon)
+        self.Weights -= alpha * vdw_corrected / \
+            np.sqrt(sdw_corrected + epsilon)
         self.Biases -= alpha * vdb_corrected / np.sqrt(sdb_corrected + epsilon)
 
         return backprop_gradient

@@ -50,7 +50,7 @@ model.compile(optimizer='adam',
               alpha_decay=True,
               show_summary=False,
               plot_loss=False,
-              )
+              loss_method="categorical_crossentropy")
 
 model.summary()
 
