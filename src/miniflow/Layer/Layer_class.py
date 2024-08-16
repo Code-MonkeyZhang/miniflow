@@ -67,12 +67,12 @@ class Dense(Layer):
                 f"Unsupported activation function: {self.activation}")
         return a_out
 
-    def backward_prop(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
+    def backward_prop(self, prev_layer_output, prediction, label, alpha, b1, b2, epsilon,
                       backprop_gradient, iter_num) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
         # 这个计算以后要独立出来，目前先放在这里
-        cost_func_gradient = np.subtract(curr_layer_output, label)
+        cost_func_gradient = np.subtract(prediction, label)
 
         # obtain gradients of weights and bias for updates
         dl_dw, dj_db, dl_dz = self.compute_gradient(

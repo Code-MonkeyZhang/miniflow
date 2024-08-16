@@ -28,9 +28,9 @@ class Model:
     # Iterate through each layer, and puts its output to the next layer
     def predict(self, x: np.ndarray) -> np.ndarray:
         prev_layer_output = x
-        for dense_layer in self.layers_array:
-            self.layers_output.append((dense_layer, prev_layer_output))
-            layer_output = dense_layer.compute_layer(prev_layer_output)
+        for layer in self.layers_array:
+            self.layers_output.append((layer, prev_layer_output))
+            layer_output = layer.compute_layer(prev_layer_output)
             prev_layer_output = layer_output
         return prev_layer_output
 
@@ -87,6 +87,9 @@ class Model:
 
                 ############################## START TRAINING ########################################
 
+                # Compute loss
+                cost_func_gradient = np.subtract(prediction, label)
+
                 # init backprop_gradient as all ones
                 backprop_gradient = np.ones(
                     self.layers_array[-1].get_weights().shape)
@@ -98,12 +101,12 @@ class Model:
                     if layer_type == "FlattenLayer":
                         break  # ignore Flatten layer
                     backprop_gradient = layer.backward_prop(prev_layer_output,
-                                                           prediction,
-                                                           label,
-                                                           learning_rate,
-                                                           b1, b2, epsilon,
-                                                           backprop_gradient,
-                                                           self.iter_num)
+                                                            prediction,
+                                                            label,
+                                                            learning_rate,
+                                                            b1, b2, epsilon,
+                                                            backprop_gradient,
+                                                            self.iter_num)
 
             tok = time.time()
             epoch_time = 1000 * (tok - tic)
