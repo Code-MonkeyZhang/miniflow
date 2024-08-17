@@ -8,12 +8,12 @@ vscode/
 venv/
 
 # test files
-TF_CNN_example.py
-test.py
-TensorFlow example.py
+playground.py
 
 # data
 data/
 
 # pacakge files
 src/miniflow.egg-info
+
+

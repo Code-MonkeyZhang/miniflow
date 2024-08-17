@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Flatten, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
+import time
 
 def load_data(filename):
     data = pd.read_csv(filename)
@@ -40,8 +41,23 @@ model.compile(optimizer=Adam(learning_rate=0.001),  # 提高学习率
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
+# 自定义回调函数来记录每个 epoch 的时间
+class TimeHistory(tf.keras.callbacks.Callback):
+    def on_train_begin(self, logs=None):
+        self.times = []
+
+    def on_epoch_begin(self, epoch, logs=None):
+        self.epoch_time_start = time.time()
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.times.append(time.time() - self.epoch_time_start)
+        print(f"Epoch {epoch + 1} took {self.times[-1]:.2f} seconds")
+
+# 创建回调实例
+time_callback = TimeHistory()
+
 # 训练模型
-history = model.fit(x_train, y_train, epochs=15, batch_size=64, validation_data=(x_test, y_test))  # 增加训练轮数和调整批量大小
+history = model.fit(x_train, y_train, epochs=10, batch_size=64, validation_data=(x_test, y_test), callbacks=[time_callback])  # 增加训练轮数和调整批量大小
 
 # 评估模型
 test_loss, test_accuracy = model.evaluate(x_test, y_test)

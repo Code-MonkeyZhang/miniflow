@@ -16,8 +16,8 @@ def load_data(filename):
 
 
 # 设置文件路径
-train_file = '/home/yufeng/Workspace/miniflow/data/eminst/emnist-balanced-train.csv'
-test_file = '/home/yufeng/Workspace/miniflow/data/eminst/emnist-balanced-test.csv'
+train_file = './data/eminst/emnist-balanced-train.csv'
+test_file = './data/eminst/emnist-balanced-test.csv'
 
 # 加载数据
 x_train, y_train = load_data(train_file)
@@ -43,16 +43,6 @@ model = Model(
 
 model.set_rand_weight(method='He')
 
-# model.dense_array[1].set_weights(
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_1_weights.npy"),
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_1_biases.npy"))
-# model.dense_array[2].set_weights(
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_2_weights.npy"),
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Dense_2_biases.npy"))
-# model.dense_array[3].set_weights(
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Softmax_weights.npy"),
-#     np.load("/home/yufeng/Workspace/miniflow/weights/tf_eminst_rand_weights/layer_Softmax_biases.npy"))
-
 model.summary()
 
 model.compile(optimizer='adam',
@@ -62,7 +52,7 @@ model.compile(optimizer='adam',
               )
 
 # 训练模型
-model.fit(x_train, y_train, learning_rate=5e-5, epochs=10, batch_size=32, b1=0.9)
+model.fit(x_train, y_train, learning_rate=5e-5, epochs=2, batch_size=32, b1=0.9)
 predictions = model.predict(x_test)
 
 # 计算准确率

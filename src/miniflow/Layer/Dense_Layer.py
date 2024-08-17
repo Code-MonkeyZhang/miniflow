@@ -1,9 +1,11 @@
-from .activation import *
+from ..activation import *
+from ..util import *
 import numpy as np
+from .Layer_class import Layer
 
 
-class Dense:
-    def __init__(self, units: int, activation: str, layer_name='layer', input_shape: int = 0):
+class Dense(Layer):
+    def __init__(self, units: int, activation: str, input_shape, layer_name='Dense'):
         self.units = units
         self.activation = activation
         self.layer_name = layer_name
@@ -22,25 +24,29 @@ class Dense:
         z = np.dot(a_in, self.Weights.T) + self.Biases
         if self.activation == "sigmoid":
             a_out = sigmoid_function(z)
-        if self.activation == "linear":
+        elif self.activation == "linear":
             a_out = z
-        if self.activation == "relu":
+        elif self.activation == "relu":
             a_out = relu_function(z)
-        if self.activation == 'softmax':
+        elif self.activation == 'softmax':
             z_max = np.max(z, axis=1, keepdims=True)
             exp_z = np.exp(z - z_max)  # 减去z中的最大值以避免溢出
             a_out = exp_z / np.sum(exp_z, axis=1, keepdims=True)  # 按行计算softmax
+        else:
+            raise ValueError(
+                f"Unsupported activation function: {self.activation}")
         return a_out
 
-    def train_layer(self, prev_layer_output, curr_layer_output, label, alpha, b1, b2, epsilon,
-                    backprop_gradient, iter_num) -> np.ndarray:
+    def backward_prop(self, prev_layer_output, prediction, label, alpha, b1, b2, epsilon,
+                      backprop_gradient, iter_num) -> np.ndarray:
 
         # 对于最后一层 softmax，cost function的求导就是标签相减
         # 这个计算以后要独立出来，目前先放在这里
-        cost_func_gradient = np.subtract(curr_layer_output, label)
+        cost_func_gradient = np.subtract(prediction, label)
 
         # obtain gradients of weights and bias for updates
-        dl_dw, dj_db, dl_dz = self.compute_gradient(prev_layer_output, cost_func_gradient, backprop_gradient)
+        dl_dw, dj_db, dl_dz = self.compute_gradient(
+            prev_layer_output, cost_func_gradient, backprop_gradient)
 
         # 根据 chain rule, 传给上一层的gradient应该是:
         # dl/da = dl/ds * ds/da
@@ -55,14 +61,17 @@ class Dense:
         vdb_corrected = self.Biases_Velocity / (1 - b1 ** iter_num)
 
         # RMS prop
-        self.Squared_Weights = b2 * self.Squared_Weights + (1 - b2) * np.square(vdw_corrected)
-        self.Squared_Biases = b2 * self.Squared_Biases + (1 - b2) * np.square(vdb_corrected)
+        self.Squared_Weights = b2 * self.Squared_Weights + \
+            (1 - b2) * np.square(vdw_corrected)
+        self.Squared_Biases = b2 * self.Squared_Biases + \
+            (1 - b2) * np.square(vdb_corrected)
 
         sdw_corrected = self.Squared_Weights / (1 - b2 ** iter_num)
         sdb_corrected = self.Squared_Biases / (1 - b2 ** iter_num)
 
         # perform gradient descent, update gradient
-        self.Weights -= alpha * vdw_corrected / np.sqrt(sdw_corrected + epsilon)
+        self.Weights -= alpha * vdw_corrected / \
+            np.sqrt(sdw_corrected + epsilon)
         self.Biases -= alpha * vdb_corrected / np.sqrt(sdb_corrected + epsilon)
 
         return backprop_gradient
@@ -109,54 +118,12 @@ class Dense:
     def set_random_weights(self):
         self.Weights = np.random.randn(*self.Weights.shape)
         self.Biases = np.random.randn(*self.Biases.shape)
-        
+
     def set_he_weights(self):
         # He初始化权重
         n = self.Weights.shape[1]  # 输入神经元数量
         scale = np.sqrt(2. / n)
         self.Weights = np.random.randn(*self.Weights.shape) * scale
-        
+
         # 偏置通常初始化为0或很小的常数
         self.Biases = np.zeros(self.Biases.shape)
-
-    def count_params(self):
-        # 计算权重参数的数量
-        weight_params = np.prod(self.Weights.shape)
-
-        # 计算偏置参数的数量
-        bias_params = np.prod(self.Biases.shape)
-
-        # 返回总参数数量
-        return weight_params + bias_params
-
-# class Conv2D:
-
-# class MaxPooling2D:
-
-class FlattenLayer(Dense):
-    def __init__(self, input_shape, layer_name='Flatten'):
-        # Flatten layer doesn't need units & activation
-        super().__init__(units=0, layer_name=layer_name, activation="Flatten")
-        self.input_shape = input_shape
-        self.activation = "Flatten"
-
-    def compute_layer(self, input_array):
-        """
-         Flattens each element a 1D array.
-         Example:
-         If input_array has a shape of (1, 28, 28), it will be reshaped to (1,784).
-         """
-
-        num_elements = np.prod(input_array.shape[1:])
-        output_array = input_array.reshape(
-            (input_array.shape[0], num_elements))
-        return output_array
-
-    def set_random_weights(self):
-        pass
-    
-    def count_params(self):
-        return 0
-
-    def output_shape(self):
-        return (None, np.prod(self.input_shape))
