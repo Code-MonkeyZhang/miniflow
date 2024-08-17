@@ -1,6 +1,7 @@
 import time
 from typing import List
-from .Layer.Layer_class import *
+from .Layer.Dense_Layer import Dense
+from .Layer.Flatten_Layer import FlattenLayer
 from .util import *
 
 """
