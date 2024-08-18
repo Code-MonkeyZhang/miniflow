@@ -104,3 +104,18 @@ class Conv2D(Layer):
             raise ValueError(
                 f"Biases shape mismatch. Expected {self.Biases.shape}, got {biases.shape}")
         self.Biases = biases
+
+
+    def set_random_weights(self):
+        self.Weights = np.random.randn(*self.Weights.shape)
+        self.Biases = np.random.randn(*self.Biases.shape)
+
+    def set_he_weights(self):
+        # He初始化权重
+        n = self.Weights.shape[1]  # 输入神经元数量
+        scale = np.sqrt(2. / n)
+        self.Weights = np.random.randn(*self.Weights.shape) * scale
+
+        # 偏置通常初始化为0或很小的常数
+        # self.Biases = np.zeros(self.Biases.shape)
+        self.Biases = np.random.randn(*self.Biases.shape) / 1000
