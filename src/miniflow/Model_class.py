@@ -130,8 +130,12 @@ class Model:
 
     def set_rand_weight(self, method='He'):
         for layer in self.layers_array:
+            # Skip FlattenLayer and MaxPooling2D Because they don't have weights
             if type(layer).__name__ == "FlattenLayer":
                 continue
+            if type(layer).__name__ == "MaxPooling2D":
+                continue
+
             if method == 'He':
                 layer.set_he_weights()
             elif method == 'Xavier':
