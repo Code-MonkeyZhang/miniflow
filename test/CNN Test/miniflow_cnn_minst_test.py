@@ -65,6 +65,8 @@ model.compile(optimizer='adam',
               plot_loss=False,
               loss_method="categorical_crossentropy")
 
+model.fit(x_train, y_train, learning_rate=5e-5,
+          epochs=1, batch_size=32, b1=0.9)
 
 # Predictions using the trained model
 start_time = time.time()
