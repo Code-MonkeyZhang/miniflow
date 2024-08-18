@@ -146,7 +146,10 @@ class Model:
 
     def save_params(self, path=""):
         for layer in self.layers_array:
-            if layer.layer_name == "Flatten":
+            # Skip FlattenLayer and MaxPooling2D Because they don't have weights
+            if type(layer).__name__ == "FlattenLayer":
+                continue
+            if type(layer).__name__ == "MaxPooling2D":
                 continue
             np.save(path + layer.layer_name + "_w" +
                     ".npy", layer.get_weights())
