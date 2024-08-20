@@ -3,6 +3,14 @@ import numpy as np
 import miniflow
 from matplotlib import pyplot as plt
 from miniflow import Model, Dense, FlattenLayer
+import os
+
+# 设置当前工作目录为项目根目录
+project_root = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
+os.chdir(project_root)
+print(f"Current Working Directory: {os.getcwd()}")
+
 
 x_train_path = './data/mnist_data/mnist_x_train.npy'
 y_train_path = './data/mnist_data/mnist_y_train.npy'
