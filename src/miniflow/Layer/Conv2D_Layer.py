@@ -38,6 +38,12 @@ class Conv2D(Layer):
             (kernel_size[0], kernel_size[1], input_shape[2], num_filter))
         self.Biases = np.zeros((num_filter))
 
+        self.Weights_Velocity = np.zeros(self.Weights.shape)
+        self.Biases_Velocity = np.zeros(self.Biases.shape)
+
+        self.Squared_Weights = np.zeros(self.Weights.shape)
+        self.Squared_Biases = np.zeros(self.Biases.shape)
+
     def compute_layer(self, A_prev: np.ndarray) -> np.ndarray:
 
         # Retrieve parameters
@@ -78,7 +84,7 @@ class Conv2D(Layer):
                 for f in range(num_filter):
                     # extract the slice from all images, choose all channels
                     conv_slice = A_prev_pad[:, vert_start:vert_end,
-                                 horiz_start:horiz_end, :]
+                                            horiz_start:horiz_end, :]
                     # Perform convolution operation & store the result in corresponding position in Z
                     conv_result = np.sum(
                         conv_slice * self.Weights[:, :, :, f], axis=(1, 2, 3))
@@ -93,6 +99,79 @@ class Conv2D(Layer):
         return Z
         return Z
 
+    def backward_prop(self, prev_layer_output, dA, learning_rate, b1, b2, epsilon, iter_num):
+        # 获取维度信息
+        (num_example, n_H_prev, n_W_prev, n_C_prev) = prev_layer_output.shape
+        (f, f, n_C_prev, n_C) = self.Weights.shape
+
+        # 初始化梯度
+        dA_prev = np.zeros_like(prev_layer_output)
+        dW = np.zeros_like(self.Weights)
+        db = np.zeros_like(self.Biases)
+
+        # 计算填充
+        if self.padding == "valid":
+            pad = 0
+        elif self.padding == "same":
+            pad = (f - 1) // 2
+
+        # 对输入进行填充
+        A_prev_pad = np.pad(prev_layer_output, ((0, 0), (pad, pad),
+                            (pad, pad), (0, 0)), mode='constant')
+
+        for h in range(dA.shape[1]):  # 遍历输出高度
+            for w in range(dA.shape[2]):  # 遍历输出宽度
+                vert_start = h * self.stride[0]
+                vert_end = vert_start + f
+                horiz_start = w * self.stride[1]
+                horiz_end = horiz_start + f
+
+                # 提取当前窗口
+                a_slice = A_prev_pad[:, vert_start:vert_end,
+                                     horiz_start:horiz_end, :]
+
+                # 对每个过滤器进行操作
+                for c in range(n_C):
+                    # 计算权重梯度
+                    dW[:, :, :, c] += np.sum(a_slice * dA[:, h, w, c]
+                                             [:, None, None, None], axis=0)
+
+                    # 计算偏置梯度
+                    db[c] += np.sum(dA[:, h, w, c])
+
+                    # 计算输入梯度
+                    dA_prev[:, vert_start:vert_end, horiz_start:horiz_end,
+                            :] += self.Weights[:, :, :, c] * dA[:, h, w, c][:, None, None, None]
+
+        # 裁剪掉填充
+        if pad != 0:
+            dA_prev = dA_prev[:, pad:-pad, pad:-pad, :]
+
+        # 更新权重和偏置
+        # self.Weights -= learning_rate * dW
+        # self.Biases -= learning_rate * db
+
+        self.Weights_Velocity = b1 * self.Weights_Velocity + (1 - b1) * dW
+        self.Biases_Velocity = b1 * self.Biases_Velocity + (1 - b1) * db
+
+        vdw_corrected = self.Weights_Velocity / (1 - b1 ** iter_num)
+        vdb_corrected = self.Biases_Velocity / (1 - b1 ** iter_num)
+
+        self.Squared_Weights = b2 * self.Squared_Weights + \
+            (1 - b2) * np.square(vdw_corrected)
+        self.Squared_Biases = b2 * self.Squared_Biases + \
+            (1 - b2) * np.square(vdb_corrected)
+
+        sdw_corrected = self.Squared_Weights / (1 - b2 ** iter_num)
+        sdb_corrected = self.Squared_Biases / (1 - b2 ** iter_num)
+
+        # perform gradient descent, update gradient
+        self.Weights -= learning_rate * vdw_corrected / \
+            np.sqrt(sdw_corrected + epsilon)
+        self.Biases -= learning_rate * vdb_corrected / \
+            np.sqrt(sdb_corrected + epsilon)
+        return dA_prev
+
     def set_weights(self, weights):
         if weights.shape != self.Weights.shape:
             raise ValueError(
@@ -104,7 +183,6 @@ class Conv2D(Layer):
             raise ValueError(
                 f"Biases shape mismatch. Expected {self.Biases.shape}, got {biases.shape}")
         self.Biases = biases
-
 
     def set_random_weights(self):
         self.Weights = np.random.randn(*self.Weights.shape)

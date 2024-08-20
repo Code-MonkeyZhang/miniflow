@@ -3,6 +3,7 @@ from typing import List
 from .Layer.Dense_Layer import Dense
 from .Layer.Flatten_Layer import FlattenLayer
 from .Layer.MaxPooling2D import MaxPooling2D
+from .Layer.Conv2D_Layer import Conv2D
 from .util import *
 
 """
@@ -100,13 +101,17 @@ class Model:
                 # reverse iterate layers Start backprop
                 for layer, prev_layer_output in reversed(self.layers_output):
                     layer_name = layer.__class__.__name__
-                    if isinstance(layer, FlattenLayer):
+                    if isinstance(layer, FlattenLayer) or isinstance(layer, MaxPooling2D):
                         # 如果是 FlattenLayer，执行它的反向传播方法
-                        backprop_gradient = layer.backward_prop(dA=backprop_gradient)
-                    elif isinstance(layer, MaxPooling2D):
-                        backprop_gradient = layer.backward_prop(dA=backprop_gradient)
+                        backprop_gradient = layer.backward_prop(
+                            dA=backprop_gradient)
                     elif isinstance(layer, Conv2D):
-                        backprop_gradient = layer.backward_prop(dA=backprop_gradient)
+                        backprop_gradient = layer.backward_prop(prev_layer_output,
+                                                                backprop_gradient,
+                                                                learning_rate,
+                                                                b1, b2, epsilon,
+                                                                self.iter_num)
+
                     elif isinstance(layer, Dense):
                         backprop_gradient = layer.backward_prop(prev_layer_output,
                                                                 prediction,
