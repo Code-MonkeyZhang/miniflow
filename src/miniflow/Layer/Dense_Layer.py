@@ -126,4 +126,5 @@ class Dense(Layer):
         self.Weights = np.random.randn(*self.Weights.shape) * scale
 
         # 偏置通常初始化为0或很小的常数
-        self.Biases = np.zeros(self.Biases.shape)
+        # self.Biases = np.zeros(self.Biases.shape)
+        self.Biases = np.random.randn(*self.Biases.shape) / 1000

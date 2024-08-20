@@ -38,42 +38,48 @@ model = Model([
     Dense(10, activation='softmax', input_shape=64)
 ], name="my_model", cost="softmax")
 
-# load weights from file
-model.layers_array[0].set_weights(
-    np.load("./weights/simple_CNN_weights/conv2d_3x3_32_weights.npy"))
-model.layers_array[0].set_bias(
-    np.load("./weights/simple_CNN_weights/conv2d_3x3_32_biases.npy"))
+# # load weights from file
+# model.layers_array[0].set_weights(
+#     np.load("./weights/simple_CNN_weights/conv2d_3x3_32_weights.npy"))
+# model.layers_array[0].set_bias(
+#     np.load("./weights/simple_CNN_weights/conv2d_3x3_32_biases.npy"))
+#
+# model.layers_array[2].set_weights(
+#     np.load("./weights/simple_CNN_weights/conv2d_3x3_64_weights.npy"))
+# model.layers_array[2].set_bias(
+#     np.load("./weights/simple_CNN_weights/conv2d_3x3_64_biases.npy"))
+#
+# model.layers_array[5].set_weights(np.load("./weights/simple_CNN_weights/dense_64_weights.npy").T,
+#                                   np.load("./weights/simple_CNN_weights/dense_64_biases.npy"))
+# model.layers_array[6].set_weights(np.load("./weights/simple_CNN_weights/dense_10_weights.npy").T,
+#                                   np.load("./weights/simple_CNN_weights/dense_10_biases.npy"))
 
-model.layers_array[2].set_weights(
-    np.load("./weights/simple_CNN_weights/conv2d_3x3_64_weights.npy"))
-model.layers_array[2].set_bias(
-    np.load("./weights/simple_CNN_weights/conv2d_3x3_64_biases.npy"))
+model.set_rand_weight(method='He')
 
-model.layers_array[5].set_weights(np.load("./weights/simple_CNN_weights/dense_64_weights.npy").T,
-                                  np.load("./weights/simple_CNN_weights/dense_64_biases.npy"))
-model.layers_array[6].set_weights(np.load("./weights/simple_CNN_weights/dense_10_weights.npy").T,
-                                  np.load("./weights/simple_CNN_weights/dense_10_biases.npy"))
 
 model.summary()
 
 model.compile(optimizer='adam',
               alpha_decay=True,
-              show_summary=False,
-              plot_loss=False,
+              show_summary=True,
+              plot_loss=True,
               loss_method="categorical_crossentropy")
 
+train_example_num = 1000
+model.fit(x_train[:train_example_num], y_train[:train_example_num],
+          learning_rate=5e-5,
+          epochs=10,
+          batch_size=8,
+          b1=0.9)
+
 # Predictions using the trained model
+test_example_num = 1000
 start_time = time.time()
-predictions = model.predict(x_test)
+predictions = model.predict(x_test[:test_example_num])
 end_time = time.time()
 
 print(f"Prediction time: {end_time - start_time:.2f} seconds")
 
-# Assume 'predictions' are the output of your model, now you need to convert it to class labels
-# Get the index of the highest probability as the prediction label
 predictions = np.argmax(predictions, axis=1)
-
-# Calculate accuracy
-# Compare predicted labels with actual labels to calculate accuracy
-accuracy = np.mean(predictions == y_test)
+accuracy = np.mean(predictions == y_test[:test_example_num])
 print(f"Test Accuracy: {accuracy * 100:.2f}%")

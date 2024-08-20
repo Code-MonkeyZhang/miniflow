@@ -2,6 +2,8 @@ import time
 from typing import List
 from .Layer.Dense_Layer import Dense
 from .Layer.Flatten_Layer import FlattenLayer
+from .Layer.MaxPooling2D import MaxPooling2D
+from .Layer.Conv2D_Layer import Conv2D
 from .util import *
 
 """
@@ -42,11 +44,11 @@ class Model:
         self.alpha_decay = alpha_decay
         self.loss_method = loss_method
 
-    def fit(self, X_train, y_train, learning_rate, epochs, batch_size=32,
+    def fit(self, X_train, y_train, learning_rate, epochs,
+            batch_size=32,
             b1=0.2,
             b2=0.999,
             epsilon=1e-8,
-            time_interval=1000,
             decay_rate=0.0002):
 
         epoch_lost_list = []
@@ -89,7 +91,7 @@ class Model:
                 ############################## START TRAINING ########################################
 
                 # Compute loss
-                cost_func_gradient = np.subtract(prediction, label)
+                # cost_func_gradient = np.subtract(prediction, label)
 
                 # init backprop_gradient as all ones
                 backprop_gradient = np.ones(
@@ -98,16 +100,26 @@ class Model:
                 self.iter_num += 1
                 # reverse iterate layers Start backprop
                 for layer, prev_layer_output in reversed(self.layers_output):
-                    layer_type = type(layer).__name__
-                    if layer_type == "FlattenLayer":
-                        break  # ignore Flatten layer
-                    backprop_gradient = layer.backward_prop(prev_layer_output,
-                                                            prediction,
-                                                            label,
-                                                            learning_rate,
-                                                            b1, b2, epsilon,
-                                                            backprop_gradient,
-                                                            self.iter_num)
+                    layer_name = layer.__class__.__name__
+                    if isinstance(layer, FlattenLayer) or isinstance(layer, MaxPooling2D):
+                        # 如果是 FlattenLayer，执行它的反向传播方法
+                        backprop_gradient = layer.backward_prop(
+                            dA=backprop_gradient)
+                    elif isinstance(layer, Conv2D):
+                        backprop_gradient = layer.backward_prop(prev_layer_output,
+                                                                backprop_gradient,
+                                                                learning_rate,
+                                                                b1, b2, epsilon,
+                                                                self.iter_num)
+
+                    elif isinstance(layer, Dense):
+                        backprop_gradient = layer.backward_prop(prev_layer_output,
+                                                                prediction,
+                                                                label,
+                                                                learning_rate,
+                                                                b1, b2, epsilon,
+                                                                backprop_gradient,
+                                                                self.iter_num)
 
             tok = time.time()
             epoch_time = 1000 * (tok - tic)
@@ -130,8 +142,12 @@ class Model:
 
     def set_rand_weight(self, method='He'):
         for layer in self.layers_array:
+            # Skip FlattenLayer and MaxPooling2D Because they don't have weights
             if type(layer).__name__ == "FlattenLayer":
                 continue
+            if type(layer).__name__ == "MaxPooling2D":
+                continue
+
             if method == 'He':
                 layer.set_he_weights()
             elif method == 'Xavier':
@@ -142,7 +158,10 @@ class Model:
 
     def save_params(self, path=""):
         for layer in self.layers_array:
-            if layer.layer_name == "Flatten":
+            # Skip FlattenLayer and MaxPooling2D Because they don't have weights
+            if type(layer).__name__ == "FlattenLayer":
+                continue
+            if type(layer).__name__ == "MaxPooling2D":
                 continue
             np.save(path + layer.layer_name + "_w" +
                     ".npy", layer.get_weights())

@@ -16,7 +16,7 @@ class FlattenLayer(Layer):
          Example:
          If input_array has a shape of (1, 28, 28), it will be reshaped to (1,784).
          """
-
+        self.cache = input_array.shape  # Storing input shape in cache for backprop
         num_elements = np.prod(input_array.shape[1:])
         output_array = input_array.reshape(
             (input_array.shape[0], num_elements))
@@ -30,3 +30,10 @@ class FlattenLayer(Layer):
 
     def get_output_shape(self):
         return np.prod(self.input_shape)
+
+    def backward_prop(self, dA):
+        # Retrieve the original input shape from cache
+        input_shape = self.cache
+        # Reshape the gradient to the original input shape
+        dA_prev = dA.reshape(input_shape)
+        return dA_prev
