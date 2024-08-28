@@ -90,9 +90,6 @@ class Model:
 
                 ############################## START TRAINING ########################################
 
-                # Compute loss
-                # cost_func_gradient = np.subtract(prediction, label)
-
                 # init backprop_gradient as all ones
                 backprop_gradient = np.ones(
                     self.layers_array[-1].get_weights().shape)
